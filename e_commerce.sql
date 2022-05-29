@@ -32,11 +32,12 @@
 -- 4. Update
 -- 5. Delete
 -- 6. Select | Views
--- 7. Funções e Triggers
--- 8. Procedimentos Armazenados
--- 9. Cursores
--- 10. Joins
--- 11. Controle de Usuários
+-- 7. Funções
+-- 8. Triggers
+-- 9. Procedimentos Armazenados
+-- 10. Cursores
+-- 11. Joins
+-- 12. Controle de Usuários
 
 -- --------------- MODELAGEM RELACIONAL ------------------------
 
@@ -618,7 +619,7 @@ ORDER BY
 
 -- --------------- CURSOR ------------------------
 
--- --------------- CONSULTAS AVANÇADAS ------------------------
+-- --------------- JOINS ------------------------
 
 -- --------------- USUÁRIOS ------------------------
 
