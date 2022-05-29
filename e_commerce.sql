@@ -39,7 +39,7 @@
 -- 11. Joins
 -- 12. Controle de Usuários
 
--- --------------- MODELAGEM RELACIONAL ------------------------
+-- --------------- MODELO RELACIONAL ------------------------
 
 -- 1. Entidades 
 
@@ -524,7 +524,7 @@ COMMIT ;
 
 SELECT * FROM tbl_produto ORDER BY id_Produto;
 
-CREATE OR REPLACE VIEW vw_tbl_produto AS
+--- CREATE OR REPLACE VIEW vw_tbl_produto AS
 SELECT
     ID_PRODUTO                              AS  "ID"        ,
     NOME_PRODUTO                            AS  "Nome"      ,
@@ -610,6 +610,23 @@ GROUP BY
 ORDER BY
     ID_PEDIDO
     ;
+
+-- --------------- OUTPUT ------------------------
+
+SET SERVEROUTPUT ON ;
+
+DECLARE 
+
+    vidProduto   INT := 2       ;
+    vnomeProduto VARCHAR2(50)   ;
+    vqntEstoque  INT            ;
+BEGIN
+
+    SELECT NOME_PRODUTO,ESTOQUE_PRODUTO INTO vnomeProduto,vqntEstoque FROM TBL_PRODUTO WHERE ID_PRODUTO = vidProduto;
+
+    DBMS_OUTPUT.PUT_LINE('O '||vnomeProduto||' contém '||vqntEstoque||' unidades no estoque.');
+
+END;
 
 -- --------------- FUNCTION ------------------------
 
