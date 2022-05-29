@@ -613,6 +613,8 @@ ORDER BY
 
 -- --------------- OUTPUT ------------------------
 
+-- Retornando quantidade de produto no estoque
+
 SET SERVEROUTPUT ON ;
 
 DECLARE 
