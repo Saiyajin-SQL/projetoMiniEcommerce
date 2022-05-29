@@ -1,48 +1,42 @@
 /****************** PROJETO MINI E-COMMERCE ******************/
 
+/*
+
+        -- Bem Vindos Sayajins --
+
+⣿⣿⠿⠿⠿⠿⣿⣷⣂⠄⠄⠄⠄⠄⠄⠈⢷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⣷⡾⠯⠉⠉⠉⠉⠚⠑⠄⡀⠄⠄⠄⠄⠄⠈⠻⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⡀⠄⠄⠄⠄⠄⠄⠄⠄⠉⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿
+⠄⠄⠄⠄⠄⠄⠄⠄⠄⢀⠎⠄⠄⣀⡀⠄⠄⠄⠄⠄⠄⠄⠘⠋⠉⠉⠉⠉⠭⠿⣿
+⡀⠄⠄⠄⠄⠄⠄⠄⠄⡇⠄⣠⣾⣳⠁⠄⠄⢺⡆⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄
+⣿⣷⡦⠄⠄⠄⠄⠄⢠⠃⢰⣿⣯⣿⡁⢔⡒⣶⣯⡄⢀⢄⡄⠄⠄⠄⠄⠄⣀⣤⣶
+⠓⠄⠄⠄⠄⠄⠸⠄⢀⣤⢘⣿⣿⣷⣷⣿⠛⣾⣿⣿⣆⠾⣷⠄⠄⠄⠄⢀⣀⣼⣿             
+⠄⠄⠄⠄⠄⠄⠄⠑⢘⣿⢰⡟⣿⣿⣷⣫⣭⣿⣾⣿⣿⣴⠏⠄⠄⢀⣺⣿⣿⣿⣿
+⣿⣿⣿⣿⣷⠶⠄⠄⠄⠹⣮⣹⡘⠛⠿⣫⣾⣿⣿⣿⡇⠑⢤⣶⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣯⣤⣤⣤⣤⣀⣀⡹⣿⣿⣷⣯⣽⣿⣿⡿⣋⣴⡀⠈⣿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣾⣝⡻⢿⣿⡿⠋⡒⣾⣿⣧⢰⢿⣿⣿⣿⣿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠃⣏⣟⣼⢋⡾⣿⣿⣿⣘⣔⠙⠿⠿⠿⣿⣿⣿
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⣛⡵⣻⠿⠟⠁⠛⠰⠿⢿⠿⡛⠉⠄⠄⢀⠄⠉⠉⢉
+⣿⣿⣿⣿⡿⢟⠩⠉⣠⣴⣶⢆⣴⡶⠿⠟⠛⠋⠉⠩⠄⠉⢀⠠⠂⠈⠄⠐⠄⠄⠄
+
+*/
+
 -- Canal Sayajin SQL    >> https://www.youtube.com/channel/UC6aR2nPTkD6GECmEjQBEWtQ
 -- Github               >> https://github.com/Sayajin-SQL
 
 --------- SUMÁRIO --------------------
 
--- 1. Tabelas
-    
-    -- 1.1 Modelagem -- Aula 01
-    -- 1.2 Criação de tabelas -- Aula 02
-    -- 1.3 Tipos de dados -- Aula 02
-    -- 1.4 Constraints -- Aula 02
-    -- 1.5 Relações -- Aula 02
-
--- 2. CRUD 
-
-    -- 2.1 Insert -- aula03
-    -- 2.2 Update -- aula04
-    -- 2.3 Delete
-    -- 2.4 Select | Views
-
--- 3. Funções e Triggers
-
-    -- 3.1 Controle de estoque
-
--- 4. Procedimentos
-
-    -- 4.1 Validação de dados
-    -- 4.2 Controle de transações
-    -- 4.3 Tratamento de erro
-    -- 4.4 Alimentação das tabelas
-
--- 5. Cursores
-
-    -- Atualização no estoque
-
--- 6. Consultas Avançadas
-
-    -- 6.1 Faturamento Mensal
-
--- 7. Controle de Usuários
-
-    -- 7.1 Privilégios
-
+-- 1. Modelagem
+-- 2. Criação de tabelas
+-- 3. Insert
+-- 4. Update
+-- 5. Delete
+-- 6. Select | Views
+-- 7. Funções e Triggers
+-- 8. Procedimentos Armazenados
+-- 9. Cursores
+-- 10. Joins
+-- 11. Controle de Usuários
 
 -- --------------- MODELAGEM RELACIONAL ------------------------
 
