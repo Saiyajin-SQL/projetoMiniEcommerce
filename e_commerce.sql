@@ -5,7 +5,7 @@
 
 --------- SUMÁRIO --------------------
 
--- 1. Tabelas --
+-- 1. Tabelas
     
     -- 1.1 Modelagem -- Aula 01
     -- 1.2 Criação de tabelas -- Aula 02
