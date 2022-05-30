@@ -616,18 +616,24 @@ ORDER BY
 -- Retornando quantidade de produto no estoque
 
 SET SERVEROUTPUT ON ;
-
+ACCEPT v_idproduto PROMPT 'Digite o id do Produto';
 DECLARE 
-    --vidProduto   INT := 2       ;
+    v_idDigitado INT            ;
     vnomeProduto VARCHAR2(50)   ;
     vqntEstoque  INT            ;
 BEGIN
 
-    SELECT NOME_PRODUTO,ESTOQUE_PRODUTO INTO vnomeProduto,vqntEstoque FROM TBL_PRODUTO WHERE ID_PRODUTO = &vidProduto;
+    v_idDigitado := &v_idproduto;
+
+    SELECT NOME_PRODUTO,ESTOQUE_PRODUTO INTO vnomeProduto,vqntEstoque FROM TBL_PRODUTO WHERE ID_PRODUTO = v_idDigitado;
 
     DBMS_OUTPUT.PUT_LINE('O '||vnomeProduto||' contém '||vqntEstoque||' unidades no estoque.');
 
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN DBMS_OUTPUT.PUT_LINE('Produto não cadastrado');
+
 END;
+
 
 -- --------------- FUNCTION ------------------------
 
@@ -726,6 +732,10 @@ BEGIN
     SP_RESET_SEQ('SQ_ID_CLIENTE');
     SP_RESET_SEQ('SQ_ID_PRODUTO');
 END;
+
+-- Retornar Tabela
+
+
 
 -- Aleatório 
 
