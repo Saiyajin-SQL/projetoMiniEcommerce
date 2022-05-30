@@ -542,7 +542,7 @@ ORDER BY
 
 SELECT * FROM tbl_cliente ORDER BY id_cliente;
 
-CREATE OR REPLACE VIEW vw_tbl_cliente AS
+-- CREATE OR REPLACE VIEW vw_tbl_cliente AS
 SELECT
     ID_CLIENTE                                      AS  "ID"            ,
     NOME_CLIENTE                                    AS  "Nome"          ,
@@ -561,7 +561,7 @@ ORDER BY
 
 SELECT * FROM tbl_pedido ORDER BY  id_pedido;
 
-CREATE OR REPLACE VIEW vw_tbl_pedido AS
+-- CREATE OR REPLACE VIEW vw_tbl_pedido AS
 SELECT
     ID_PEDIDO           AS  "Nº Pedido",
     ID_CLIENTE          AS  "ID do Cliente",
@@ -611,20 +611,19 @@ ORDER BY
     ID_PEDIDO
     ;
 
--- --------------- OUTPUT ------------------------
+-- --------------- INPUT | OUTPUT ------------------------
 
 -- Retornando quantidade de produto no estoque
 
 SET SERVEROUTPUT ON ;
 
 DECLARE 
-
-    vidProduto   INT := 2       ;
+    --vidProduto   INT := 2       ;
     vnomeProduto VARCHAR2(50)   ;
     vqntEstoque  INT            ;
 BEGIN
 
-    SELECT NOME_PRODUTO,ESTOQUE_PRODUTO INTO vnomeProduto,vqntEstoque FROM TBL_PRODUTO WHERE ID_PRODUTO = vidProduto;
+    SELECT NOME_PRODUTO,ESTOQUE_PRODUTO INTO vnomeProduto,vqntEstoque FROM TBL_PRODUTO WHERE ID_PRODUTO = &vidProduto;
 
     DBMS_OUTPUT.PUT_LINE('O '||vnomeProduto||' contém '||vqntEstoque||' unidades no estoque.');
 
@@ -689,22 +688,45 @@ SELECT * FROM user_tab_privs     WHERE grantee   = 'USER_DEV_01';
 
 -- --------------- OUTROS ------------------------
 
+-- Zerar tabelas 
+
+TRUNCATE TABLE TBL_CARRINHO ;
+TRUNCATE TABLE TBL_PEDIDO   ;
+TRUNCATE TABLE TBL_CLIENTE  ;
+TRUNCATE TABLE TBL_PRODUTO  ;
+
+-- Sequencias
+
+SELECT SEQ_ID_PEDIDO.CURRVAL FROM DUAL; -- Atual
+
+SELECT SEQ_ID_PEDIDO.NEXTVAL FROM DUAL; -- Próxima
+
+-- Zerar sequencia
+
+CREATE OR REPLACE PROCEDURE SP_RESET_SEQ(v_seq_name in VARCHAR2)
+IS
+    v_valor_seq NUMBER;
+BEGIN
+    EXECUTE IMMEDIATE
+    'SELECT ' || v_seq_name || ' .NEXTVAL FROM DUAL' INTO v_valor_seq;
+
+    EXECUTE IMMEDIATE
+    'ALTER SEQUENCE ' || v_seq_name || ' INCREMENT BY -' || v_valor_seq || ' MINVALUE 0';
+
+    EXECUTE IMMEDIATE
+    'SELECT ' || v_seq_name || ' .NEXTVAL FROM DUAL' INTO v_valor_seq;
+
+    EXECUTE IMMEDIATE
+    'ALTER SEQUENCE ' || v_seq_name || ' INCREMENT BY 1 MINVALUE 0';
+
+END;
+
+BEGIN
+    SP_RESET_SEQ('SEQ_ID_PEDIDO');
+    SP_RESET_SEQ('SQ_ID_CLIENTE');
+    SP_RESET_SEQ('SQ_ID_PRODUTO');
+END;
+
 -- Aleatório 
 
 SELECT * FROM (SELECT * FROM tbl_cliente ORDER BY dbms_random.value) WHERE rownum = 1;   
-
--- Formato de data 
-
-ALTER SESSION SET NLS_DATE_FORMAT = 'dd-mm-yyyy hh24:mi:ss';
-
--- Formatar território 
-
-ALTER SESSION SET NLS_TERRITORY = 'BRAZIL' ;
-
--- Formatar idioma 
-
-ALTER SESSION SET NLS_LANGUAGE = 'PORTUGUESE' ;
-
--- Data pro extenso
-
-SELECT TO_CHAR(SYSDATE,'day, dd "de" month "de" YYYY') AS Data_Extenso FROM DUAL;
