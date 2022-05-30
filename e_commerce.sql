@@ -635,11 +635,65 @@ BEGIN
         WHEN NO_DATA_FOUND THEN DBMS_OUTPUT.PUT_LINE('Produto não cadastrado');
 
 END;
+/
+
 -- --------------- FUNCTION ------------------------
 
 -- --------------- TRIGGER ------------------------
 
 -- --------------- PROCEDIMENTOS ------------------------
+
+-- Inserir 100 produtos
+
+SET SERVEROUTPUT ON ;
+
+DECLARE 
+    v_registros_inseridos   INT := 100  ;
+    v_idProduto             INT ;
+    v_nomeProduto           VARCHAR2(50);
+    v_precoProduto          NUMBER(9,2);
+    v_custoProduto          NUMBER(9,2);
+    v_estoque               INT ;
+
+BEGIN
+
+    -- Deletar registros da tabela + resetar sequencia
+
+    DELETE FROM TBL_PRODUTO ;
+    SP_RESET_SEQ('SQ_ID_PRODUTO');
+
+    -- Inserir registros
+
+    FOR CONT IN 1..v_registros_inseridos LOOP
+
+        v_nomeProduto   := 'Produto ' || CONT                                   ;
+        v_custoProduto  :=  ROUND(DBMS_RANDOM.VALUE*100,2)                      ;
+        v_precoProduto  :=  v_custoProduto + ROUND(DBMS_RANDOM.VALUE*10,2)      ;
+        v_estoque       :=  ROUND(DBMS_RANDOM.VALUE*100)                        ;
+
+        INSERT INTO 
+            ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
+        VALUES  
+            (sq_id_produto.nextval,v_nomeProduto,v_custoProduto,v_precoProduto,v_estoque);
+
+    END LOOP;
+
+    IF SQLCODE = 0 THEN
+        COMMIT;
+        DBMS_OUTPUT.PUT_LINE ('Dados registrados com sucesso');
+    END IF;
+
+    EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE ('Mensagem de erro >> ' || SQLERRM);
+        DBMS_OUTPUT.PUT_LINE ('Nº de erro >> ' ||SQLCODE);
+
+        ROLLBACK;
+
+END;
+/
+
+SELECT * FROM TBL_PRODUTO;
 
 -- --------------- CURSOR ------------------------
 
@@ -694,13 +748,6 @@ SELECT * FROM user_tab_privs     WHERE grantee   = 'USER_DEV_01';
 
 -- --------------- OUTROS ------------------------
 
--- Zerar tabelas 
-
-TRUNCATE TABLE TBL_CARRINHO ;
-TRUNCATE TABLE TBL_PEDIDO   ;
-TRUNCATE TABLE TBL_CLIENTE  ;
-TRUNCATE TABLE TBL_PRODUTO  ;
-
 -- Sequencias
 
 SELECT SEQ_ID_PEDIDO.CURRVAL FROM DUAL; -- Atual
@@ -732,6 +779,7 @@ BEGIN
     SP_RESET_SEQ('SQ_ID_CLIENTE');
     SP_RESET_SEQ('SQ_ID_PRODUTO');
 END;
+
 
 -- Aleatório 
 
