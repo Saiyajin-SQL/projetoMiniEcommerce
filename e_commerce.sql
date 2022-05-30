@@ -616,7 +616,9 @@ ORDER BY
 -- Retornando quantidade de produto no estoque
 
 SET SERVEROUTPUT ON ;
+
 ACCEPT v_idproduto PROMPT 'Digite o id do Produto';
+
 DECLARE 
     v_idDigitado INT            ;
     vnomeProduto VARCHAR2(50)   ;
@@ -633,8 +635,6 @@ BEGIN
         WHEN NO_DATA_FOUND THEN DBMS_OUTPUT.PUT_LINE('Produto não cadastrado');
 
 END;
-
-
 -- --------------- FUNCTION ------------------------
 
 -- --------------- TRIGGER ------------------------
@@ -733,10 +733,7 @@ BEGIN
     SP_RESET_SEQ('SQ_ID_PRODUTO');
 END;
 
--- Retornar Tabela
-
-
-
 -- Aleatório 
 
 SELECT * FROM (SELECT * FROM tbl_cliente ORDER BY dbms_random.value) WHERE rownum = 1;   
+
