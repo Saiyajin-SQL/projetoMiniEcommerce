@@ -1,6 +1,6 @@
 # Projeto Mini E-commerce - Oracle
 
-<img width="200" height="200" align="center" style="border-radius:50px;" src="[https://media1.tenor.com/images/da89ac962c46b17f191edaaa7d217e4a/tenor.gif?itemid=14803941](https://media1.tenor.com/images/501aeaae8758b0f6c5c7a17d9533ecae/tenor.gif?itemid=14101790)" />
+<img width="200" height="200" align="center" style="border-radius:50px;" src="https://media1.tenor.com/images/9b790346428732ac43343d1a72d3d0bc/tenor.gif?itemid=12582418" />
 
 Olá Sayajin 👊💥
 
