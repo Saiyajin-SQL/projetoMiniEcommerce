@@ -99,6 +99,7 @@ where
     table_name = UPPER('tbl_produto')
     ;
 
+-- ------------------------ // ------------------------
 
 -- 2 - Cliente --
 
@@ -149,6 +150,8 @@ where
     table_name = UPPER('tbl_cliente')
     ;
 
+-- ------------------------ // ------------------------
+
 -- 3 - Pedido --
 
     -- 3.1 - ID -- PK
@@ -173,7 +176,6 @@ CREATE TABLE tbl_pedido (
 )
 ;
 
-
     /* Sequência */
 
 CREATE SEQUENCE seq_id_pedido
@@ -192,6 +194,7 @@ where
     table_name = UPPER('tbl_pedido')
     ;
 
+-- ------------------------ // ------------------------
 
 -- 4 - Carrinho --
 
@@ -236,67 +239,103 @@ where
 
 -- --------------- INSERT ------------------------
 
--- Produto
+-- Produtos --
+
+-- Inserindo produtos
+
+-- Produto 1
 
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
 VALUES 
     (sq_id_produto.nextval,'Produto_1',99.99,50.99,10);
 
+-- Produto 2
+
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
 VALUES 
     (sq_id_produto.nextval,'Produto_2',199.99,150.99,5);
+
+-- Produto 3
 
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
 VALUES 
     (sq_id_produto.nextval,'Produto_3',299.99,250.99,6);
 
+-- Produto 4
+
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
 VALUES 
     (sq_id_produto.nextval,'Produto_4',399.99,200.99,5);
+
+-- Produto 5
 
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
 VALUES 
     (sq_id_produto.nextval,'Produto_5',259.99,230.99,NULL);
 
+-- Comitando inserts
+
 COMMIT;
+
+-- Retornando tabela
 
 SELECT * FROM tbl_produto ORDER BY id_Produto;
 
--- Cliente
+-- ------------------------ // ------------------------
+
+-- Cliente --
+
+-- Inserindo clientes
+
+-- Cliente 1
 
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
     (sq_id_cliente.nextval,'Cliente_1','Sobrenome_2','M',TO_DATE('1979-06-04','YYYY-MM-DD'),'(99)99999-9999','Cliente01@xxxx.com');
 
+-- Cliente 2
+
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
     (sq_id_cliente.nextval,'Cliente_2','Sobrenome_2','F',TO_DATE('1969-12-09','YYYY-MM-DD'),'(99)99999-9990','Cliente02@xxxx.com');
+
+-- Cliente 3
 
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
     (sq_id_cliente.nextval,'Cliente_3','Sobrenome_3','M',TO_DATE('1999-11-11','YYYY-MM-DD'),'(99)99999-9991','Cliente03@xxxx.com');
 
+-- Cliente 4
+
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
     (sq_id_cliente.nextval,'Cliente_4','Sobrenome_4','F',TO_DATE('1987-05-01','YYYY-MM-DD'),'(99)99999-9992','Cliente04@xxxx.com');
+
+-- Cliente 5
 
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
     (sq_id_cliente.nextval,'Cliente_5','Sobrenome_5','M',TO_DATE('19-12-1995','dd-mm-yyyy'),'(99)99999-9993','Cliente05@xxxx.com');
 
+-- Comitando inserts
+
 COMMIT;
 
+-- Retornando tabela de clientes
+
 SELECT * FROM tbl_cliente ORDER BY id_cliente;
+
+-- ------------------------ // ------------------------
 
 -- Pedido + Carrinho
 
@@ -322,6 +361,17 @@ VALUES (
     (SELECT PRECO_PRODUTO FROM tbl_produto WHERE id_produto = 1),
     (SELECT CUSTO_PRODUTO FROM tbl_produto WHERE id_produto = 1))
     ;
+
+-- Comitando inserts
+
+COMMIT;
+
+-- Retornando tabela de pedidos e carrinho
+
+SELECT * FROM tbl_pedido    ORDER BY id_pedido;
+SELECT * FROM tbl_carrinho  ORDER BY id_pedido;
+
+-- ------------------------ // ------------------------
 
 -- Pedido 02 -- Pago
 
@@ -357,6 +407,18 @@ VALUES (
     (SELECT PRECO_PRODUTO FROM tbl_produto WHERE id_produto = 4),
     (SELECT CUSTO_PRODUTO FROM tbl_produto WHERE id_produto = 4))
     ;
+
+-- Comitando inserts
+
+COMMIT;
+
+-- Retornando tabela de pedidos e carrinho
+
+SELECT * FROM tbl_pedido    ORDER BY id_pedido;
+SELECT * FROM tbl_carrinho  ORDER BY id_pedido;
+
+
+-- ------------------------ // ------------------------
 
 -- Pedido 03 -- Pago
 
@@ -394,10 +456,15 @@ VALUES (
     ;
 
 
+-- Comitando inserts
+
 COMMIT;
+
+-- Retornando tabela de pedidos e carrinho
 
 SELECT * FROM tbl_pedido    ORDER BY id_pedido;
 SELECT * FROM tbl_carrinho  ORDER BY id_pedido;
+
 
 -- --------------- UPDATE ------------------------
 
@@ -416,6 +483,8 @@ WHERE
     ;
 
 COMMIT ;
+
+-- ------------------------ // ------------------------
 
 -- Pedido 02 >> produto 3 | 3 unid + produto 4 | 1 unid
 
@@ -438,6 +507,8 @@ WHERE
     ;
 
 COMMIT ;
+
+-- ------------------------ // ------------------------
 
 -- Pedido 03 >> produto 1 | 1 unid + produto 4 | 1 unid
 
@@ -477,6 +548,8 @@ WHERE
     SITUACAO_PAG IS NULL 
     ;
 
+-- ------------------------ // ------------------------
+
 -- Verificar qnt no carrinho do pedido 01
 
 SELECT 
@@ -489,6 +562,8 @@ WHERE
     id_pedido = 1 
     ; 
 
+-- ------------------------ // ------------------------
+
 -- Verificar qnt de estoque do produto 01
 
 SELECT 
@@ -500,11 +575,15 @@ WHERE
     ID_PRODUTO = 1 
     ;
 
+-- ------------------------ // ------------------------
+
 -- Cancelar pedido 01
 
 DELETE FROM tbl_pedido WHERE ID_PEDIDO = 1 ;
 
 COMMIT ;
+
+-- ------------------------ // ------------------------
 
 -- Registrar entrada estoque -- Produto 01 | 2 unid
 
@@ -538,6 +617,10 @@ ORDER BY
     id_produto
     ;
 
+SELECT * FROM vw_tbl_produto;
+
+-- ------------------------ // ------------------------
+
 -- Cliente
 
 SELECT * FROM tbl_cliente ORDER BY id_cliente;
@@ -547,7 +630,10 @@ SELECT
     ID_CLIENTE                                      AS  "ID"            ,
     NOME_CLIENTE                                    AS  "Nome"          ,
     SOBRENOME_CLIENTE                               AS  "Sobrenome"     ,
-    SEXO_CLIENTE                                    AS  "Gênero"        ,
+    CASE SEXO_CLIENTE
+        WHEN 'M' THEN 'Masculino'
+        WHEN 'F' THEN 'Feminino'
+        END                                         AS  "Gênero"        ,
     TO_CHAR(NASCIMENTO_CLIENTE,'dd-mm-YYYY')        AS  "Nascimento"    ,
     CELULAR_CLIENTE                                 AS  "Celular"       ,
     EMAIL_CLIENTE                                   AS  "Email"
@@ -557,46 +643,89 @@ ORDER BY
     ID_CLIENTE
     ;
 
+SELECT * FROM vw_tbl_cliente;
+
+-- ------------------------ // ------------------------
+
 -- Pedido 
 
 SELECT * FROM tbl_pedido ORDER BY  id_pedido;
 
 -- CREATE OR REPLACE VIEW vw_tbl_pedido AS
 SELECT
-    ID_PEDIDO           AS  "Nº Pedido",
-    ID_CLIENTE          AS  "ID do Cliente",
+    ID_PEDIDO                               AS  "Nº Pedido",
+    ID_CLIENTE                              AS  "ID do Cliente",
     CASE 
         WHEN SITUACAO_PAG IS NULL THEN 'Pendente' 
         ELSE                            'Pago' 
-        END             AS  "Situação",
-    DATA_PEDIDO         AS  "Data"
+        END                                 AS  "Situação",
+    TO_CHAR(DATA_PEDIDO,'dd-mm-YYYY')       AS  "Data"
 FROM
     ADMIN.TBL_PEDIDO
 ORDER BY
     ID_PEDIDO
     ;
 
+SELECT * FROM vw_tbl_pedido;
+
+-- ------------------------ // ------------------------
+
 -- Carrinho
 
 SELECT * FROM tbl_carrinho ORDER BY id_pedido ;
 
+-- CREATE OR REPLACE VIEW vw_tbl_carrinho AS
 SELECT
-    ID_PEDIDO                           AS  "Nº do Pedido"      ,
-    ID_PRODUTO                          AS  "Id do Produto"     ,
-    QNT_PRODUTO                         AS  "Quantidade"        ,
-    PRECO_PRODUTO                       AS  "Preço Unitário"    ,
-    CUSTO_PRODUTO                       AS  "Custo Unitário"    ,
-    CUSTO_PRODUTO                       AS  "Custo Total"       ,
-    PRECO_PRODUTO                       AS  "Preço Total"       ,
-    PRECO_PRODUTO-CUSTO_PRODUTO         AS  "Faturamento Total"       
+    ID_PEDIDO                                                       AS  "Nº do Pedido"      ,
+    ID_PRODUTO                                                      AS  "Id do Produto"     ,
+    QNT_PRODUTO                                                     AS  "Quantidade"        ,
+    PRECO_PRODUTO                                                   AS  "Preço Unitário"    ,
+    CUSTO_PRODUTO                                                   AS  "Custo Unitário"    ,
+    CUSTO_PRODUTO*QNT_PRODUTO                                       AS  "Custo Total"       ,
+    PRECO_PRODUTO*QNT_PRODUTO                                       AS  "Preço Total"       ,
+    (PRECO_PRODUTO*QNT_PRODUTO)-(CUSTO_PRODUTO*QNT_PRODUTO)         AS  "Faturamento Total"       
 FROM
     ADMIN.TBL_CARRINHO
 ORDER BY
     ID_PEDIDO
     ;
 
--- Agrupando pedidos
+SELECT * FROM vw_tbl_carrinho;
 
+-- ------------------------ // ------------------------
+
+-- Pedido + Carrinho
+
+-- CREATE OR REPLACE VIEW vw_tbl_resumo_pedido AS
+SELECT
+    P1.ID_PEDIDO                               AS  "Nº Pedido"           ,
+    SUM(C1.QNT_PRODUTO)                        AS  "Quantidade"          ,
+    SUM(C1.PRECO_PRODUTO*C1.QNT_PRODUTO)            AS  "Preço Total"         ,
+    CASE 
+        WHEN P1.SITUACAO_PAG IS NULL THEN 'Pendente' 
+        ELSE                            'Pago' 
+        END                                    AS  "Situação"          ,
+    TO_CHAR(P1.DATA_PEDIDO,'dd-mm-YYYY')       AS  "Data"
+
+FROM
+    ADMIN.TBL_PEDIDO    P1
+INNER JOIN 
+    ADMIN.TBL_CARRINHO  C1
+ON
+    P1.ID_PEDIDO = C1.ID_PEDIDO
+GROUP BY
+    P1.ID_PEDIDO,P1.SITUACAO_PAG,P1.DATA_PEDIDO
+ORDER BY
+    P1.ID_PEDIDO
+    ;
+
+SELECT * FROM vw_tbl_resumo_pedido;
+
+-- ------------------------ // ------------------------
+
+-- Faturamento pedidos
+
+-- CREATE OR REPLACE VIEW vw_tbl_faturamento_pedido AS
 SELECT
     ID_PEDIDO                                AS  "Nº do Pedido"      ,
     SUM(QNT_PRODUTO)                         AS  "Quantidade"        ,
@@ -610,6 +739,8 @@ GROUP BY
 ORDER BY
     ID_PEDIDO
     ;
+
+SELECT * FROM vw_tbl_faturamento_pedido;
 
 -- --------------- INPUT | OUTPUT ------------------------
 
@@ -639,6 +770,24 @@ END;
 
 -- --------------- FUNCTION ------------------------
 
+-- Retornar estoque do produto
+
+CREATE OR REPLACE FUNCTION FUNC_RETORNAR_ESTOQUE(v_idProduto IN NUMBER)
+RETURN NUMBER 
+    IS 
+        v_qnt_produto NUMBER;
+BEGIN
+
+    SELECT ESTOQUE_PRODUTO INTO v_qnt_produto FROM TBL_PRODUTO WHERE ID_PRODUTO = v_idProduto ;
+
+    RETURN v_qnt_produto;
+
+END;
+/
+
+SELECT FUNC_RETORNAR_ESTOQUE(1) "Estoque" FROM DUAL;
+
+
 -- --------------- TRIGGER ------------------------
 
 -- --------------- PROCEDIMENTOS ------------------------
@@ -648,6 +797,8 @@ END;
 SELECT SEQ_ID_PEDIDO.CURRVAL FROM DUAL; -- Atual
 
 SELECT SEQ_ID_PEDIDO.NEXTVAL FROM DUAL; -- Próxima
+
+-- ------------------------ // ------------------------
 
 -- Zerar tabelas
 
@@ -684,10 +835,13 @@ BEGIN
 END;
 /
 
+-- Limpar tabelas
 
 EXEC SP_ZERAR_TABELA('SEQ_ID_PEDIDO','TBL_PEDIDO');
 EXEC SP_ZERAR_TABELA('SQ_ID_CLIENTE','TBL_CLIENTE');
 EXEC SP_ZERAR_TABELA('SQ_ID_PRODUTO','TBL_PRODUTO');
+
+-- ------------------------ // ------------------------
 
 -- Inserir 100 produtos
 
@@ -705,9 +859,7 @@ DECLARE
 BEGIN
 
     -- Deletar registros da tabela + resetar sequencia
-
-    DELETE FROM TBL_PRODUTO ;
-    SP_RESET_SEQ('SQ_ID_PRODUTO');
+    SP_ZERAR_TABELA('SQ_ID_PRODUTO','TBL_PRODUTO');
 
     -- Inserir registros
 
@@ -721,7 +873,7 @@ BEGIN
         INSERT INTO 
             ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
         VALUES  
-            (sq_id_produto.nextval,v_nomeProduto,v_custoProduto,v_precoProduto,v_estoque);
+            (sq_id_produto.nextval,v_nomeProduto,v_precoProduto,v_custoProduto,v_estoque);
 
     END LOOP;
 
@@ -731,7 +883,9 @@ BEGIN
         COMMIT;
         OPEN cursor_ FOR SELECT 'Dados registrados com sucesso' "Retorno" FROM DUAL; 
         DBMS_SQL.RETURN_RESULT(cursor_);
-        CLOSE cursor_;
+        IF cursor_ %ISOPEN THEN 
+            CLOSE cursor_;
+        END IF;
     END IF;
 
     -- Tratamento de erro
@@ -749,13 +903,18 @@ BEGIN
             FROM DUAL; 
 
         DBMS_SQL.RETURN_RESULT(cursor_);
-        CLOSE cursor_;
+        
+        IF cursor_ %ISOPEN THEN 
+            CLOSE cursor_;
+        END IF;
         ROLLBACK;
 
 END;
 /
 
 SELECT * FROM TBL_PRODUTO;
+
+-- ------------------------ // ------------------------
 
 -- --------------- CURSOR ------------------------
 
