@@ -23,6 +23,7 @@
 
 -- Canal Sayajin SQL    >> https://www.youtube.com/channel/UC6aR2nPTkD6GECmEjQBEWtQ
 -- Github               >> https://github.com/Sayajin-SQL
+-- Email                >> sayajinsql@outloook.com
 
 .
 .
@@ -40,11 +41,6 @@
 */
 
 
-
-
-/* ########## AULA 01  ########## */
-
--- Apresentação do sumário do projeto
 
 
 --------- SUMÁRIO --------------------
@@ -64,12 +60,6 @@
 
 
 
-/* ########## AULA 02  ########## */
-
--- Apresentação do modelo relacional
-
-
-
 -- --------------- MODELO RELACIONAL ------------------------
 
 -- 1. Entidades 
@@ -79,20 +69,15 @@
     -- 1.3 Pedido       (Fraca)
     -- 1.4 Carrinho     (Associativa)
 
-/* 
 
-    PRODUTO --N---N-- PEDIDO -N---1- CLIENTE  
-                |
-                |
-             CARRINHO
 
-*/
+    -- PRODUTO --N---N-- PEDIDO -N---1- CLIENTE  
+--                 |
+--                 |
+             -- CARRINHO
 
 
 
-/* ########## AULA 03  ########## */
-
--- Criando tabelas | tipos de dados | Contraints | Sequências
 
 
 -- --------------- TABELAS ------------------------
@@ -278,115 +263,112 @@ where
 
 
 
-/* ########## AULA 04  ########## */
-
--- Inserindo registros nas tabelas
-
 
 
 -- --------------- INSERT ------------------------
 
 -- Produtos --
 
--- Inserindo produtos
+-- Inserindo produtos --
 
--- Produto 1
+-- Produto 1 --
 
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
 VALUES 
     (sq_id_produto.nextval,'Produto_1',99.99,50.99,10);
 
--- Produto 2
+-- Produto 2 --
 
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
 VALUES 
     (sq_id_produto.nextval,'Produto_2',199.99,150.99,5);
 
--- Produto 3
+-- Produto 3 --
 
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
 VALUES 
     (sq_id_produto.nextval,'Produto_3',299.99,250.99,6);
 
--- Produto 4
+-- Produto 4 --
 
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
 VALUES 
     (sq_id_produto.nextval,'Produto_4',399.99,200.99,5);
 
--- Produto 5
+-- Produto 5 --
 
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
 VALUES 
     (sq_id_produto.nextval,'Produto_5',259.99,230.99,NULL);
 
--- Comitando inserts
+-- Comitando inserts --
 
 COMMIT;
 
--- Retornando tabela
+-- Retornando tabela --
 
 SELECT * FROM tbl_produto ORDER BY id_Produto;
+
 
 -- ------------------------ // ------------------------
 
 -- Cliente --
 
--- Inserindo clientes
+-- Inserindo clientes --
 
--- Cliente 1
+-- Cliente 1 --
 
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
     (sq_id_cliente.nextval,'Cliente_1','Sobrenome_2','M',TO_DATE('1979-06-04','YYYY-MM-DD'),'(99)99999-9999','Cliente01@xxxx.com');
 
--- Cliente 2
+-- Cliente 2 --
 
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
     (sq_id_cliente.nextval,'Cliente_2','Sobrenome_2','F',TO_DATE('1969-12-09','YYYY-MM-DD'),'(99)99999-9990','Cliente02@xxxx.com');
 
--- Cliente 3
+-- Cliente 3 --
 
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
     (sq_id_cliente.nextval,'Cliente_3','Sobrenome_3','M',TO_DATE('1999-11-11','YYYY-MM-DD'),'(99)99999-9991','Cliente03@xxxx.com');
 
--- Cliente 4
+-- Cliente 4 --
 
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
     (sq_id_cliente.nextval,'Cliente_4','Sobrenome_4','F',TO_DATE('1987-05-01','YYYY-MM-DD'),'(99)99999-9992','Cliente04@xxxx.com');
 
--- Cliente 5
+-- Cliente 5 --
 
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
     (sq_id_cliente.nextval,'Cliente_5','Sobrenome_5','M',TO_DATE('19-12-1995','dd-mm-yyyy'),'(99)99999-9993','Cliente05@xxxx.com');
 
--- Comitando inserts
+-- Comitando inserts --
 
 COMMIT;
 
--- Retornando tabela de clientes
+-- Retornando tabela de clientes --
 
 SELECT * FROM tbl_cliente ORDER BY id_cliente;
 
 -- ------------------------ // ------------------------
 
--- Pedido + Carrinho
+-- Pedido + Carrinho --
 
--- Pedido 01 -- Pendente
+-- Pedido 01 -- Pendente --
 
 INSERT INTO 
     ADMIN.TBL_PEDIDO (ID_PEDIDO,ID_CLIENTE,SITUACAO_PAG,DATA_PEDIDO) 
@@ -397,7 +379,7 @@ VALUES (
     CURRENT_DATE + 1)
     ;
 
--- Adicionando produto 1 | 2 unid 
+-- Adicionando produto 1 | 2 unid  --
 
 INSERT INTO 
     ADMIN.TBL_CARRINHO (ID_PEDIDO,ID_PRODUTO,QNT_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO) 
@@ -409,18 +391,18 @@ VALUES (
     (SELECT CUSTO_PRODUTO FROM tbl_produto WHERE id_produto = 1))
     ;
 
--- Comitando inserts
+-- Comitando inserts --
 
 COMMIT;
 
--- Retornando tabela de pedidos e carrinho
+-- Retornando tabela de pedidos e carrinho --
 
 SELECT * FROM tbl_pedido    ORDER BY id_pedido;
 SELECT * FROM tbl_carrinho  ORDER BY id_pedido;
 
 -- ------------------------ // ------------------------
 
--- Pedido 02 -- Pago
+-- Pedido 02 -- Pago --
 
 INSERT INTO 
     ADMIN.TBL_PEDIDO (ID_PEDIDO,ID_CLIENTE,SITUACAO_PAG,DATA_PEDIDO) 
@@ -431,7 +413,7 @@ VALUES (
     CURRENT_DATE + 2)
     ;
 
--- Adicionando produto 3 | 3 unid 
+-- Adicionando produto 3 | 3 unid  --
 
 INSERT INTO 
     ADMIN.TBL_CARRINHO (ID_PEDIDO,ID_PRODUTO,QNT_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO) 
@@ -443,7 +425,7 @@ VALUES (
     (SELECT CUSTO_PRODUTO FROM tbl_produto WHERE id_produto = 2))
     ;
 
--- Adicionando produto 4 | 1 unid 
+-- Adicionando produto 4 | 1 unid  --
 
 INSERT INTO 
     ADMIN.TBL_CARRINHO (ID_PEDIDO,ID_PRODUTO,QNT_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO) 
@@ -455,11 +437,11 @@ VALUES (
     (SELECT CUSTO_PRODUTO FROM tbl_produto WHERE id_produto = 4))
     ;
 
--- Comitando inserts
+-- Comitando inserts --
 
 COMMIT;
 
--- Retornando tabela de pedidos e carrinho
+-- Retornando tabela de pedidos e carrinho --
 
 SELECT * FROM tbl_pedido    ORDER BY id_pedido;
 SELECT * FROM tbl_carrinho  ORDER BY id_pedido;
@@ -467,7 +449,7 @@ SELECT * FROM tbl_carrinho  ORDER BY id_pedido;
 
 -- ------------------------ // ------------------------
 
--- Pedido 03 -- Pago
+-- Pedido 03 -- Pago --
 
 INSERT INTO 
     ADMIN.TBL_PEDIDO (ID_PEDIDO,ID_CLIENTE,SITUACAO_PAG,DATA_PEDIDO) 
@@ -478,7 +460,7 @@ VALUES (
     CURRENT_DATE + 4)
     ;
 
--- Adicionando produto 1 | 1 unid 
+-- Adicionando produto 1 | 1 unid --
 
 INSERT INTO 
     ADMIN.TBL_CARRINHO (ID_PEDIDO,ID_PRODUTO,QNT_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO) 
@@ -490,7 +472,7 @@ VALUES (
     (SELECT CUSTO_PRODUTO FROM tbl_produto WHERE id_produto = 1))
     ;
 
--- Adicionando produto 4 | 1 unid 
+-- Adicionando produto 4 | 1 unid  --
 
 INSERT INTO 
     ADMIN.TBL_CARRINHO (ID_PEDIDO,ID_PRODUTO,QNT_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO) 
@@ -503,25 +485,22 @@ VALUES (
     ;
 
 
--- Comitando inserts
+-- Comitando inserts --
 
 COMMIT;
 
--- Retornando tabela de pedidos e carrinho
+-- Retornando tabela de pedidos e carrinho --
 
 SELECT * FROM tbl_pedido    ORDER BY id_pedido;
 SELECT * FROM tbl_carrinho  ORDER BY id_pedido;
-
-
-/* ########## AULA 05  ########## */
-
--- Alterando registros nas tabelas
 
 
 
 -- --------------- UPDATE ------------------------
 
 -- Atualizar saída de estoque --
+
+-- Simulando trigger de saída de estoque --
 
 -- Pedido 01 >> produto 1 | 2 unid
 
@@ -539,7 +518,7 @@ COMMIT ;
 
 -- ------------------------ // ------------------------
 
--- Pedido 02 >> produto 3 | 3 unid + produto 4 | 1 unid
+-- Pedido 02 >> produto 3 | 3 unid + produto 4 | 1 unid --
 
 SELECT id_produto,estoque_produto FROM tbl_produto  WHERE id_produto in (3,4) ;
 
@@ -563,7 +542,7 @@ COMMIT ;
 
 -- ------------------------ // ------------------------
 
--- Pedido 03 >> produto 1 | 1 unid + produto 4 | 1 unid
+-- Pedido 03 >> produto 1 | 1 unid + produto 4 | 1 unid --
 
 SELECT id_produto,estoque_produto FROM tbl_produto  WHERE id_produto in (1,4) ;
 
@@ -587,19 +566,13 @@ COMMIT ;
 
 
 
-/* ########## AULA 05  ########## */
-
--- Deletando registros nas tabelas
-
-
-
 -- --------------- DELETE ------------------------
 
--- Cancelando um pedido
+-- Cancelando um pedido  --
 
--- Pedidos Pendentes - Pedido 01
+-- Pedidos Pendentes - Pedido 01  --
 
--- Verificar pedidos pendentes
+-- Verificar pedidos pendentes  --
 
 SELECT 
     * 
@@ -611,7 +584,7 @@ WHERE
 
 -- ------------------------ // ------------------------
 
--- Verificar qnt no carrinho do pedido 01
+-- Verificar qnt no carrinho do pedido 01 --
 
 SELECT 
     ID_PEDIDO,
@@ -625,7 +598,7 @@ WHERE
 
 -- ------------------------ // ------------------------
 
--- Verificar qnt de estoque do produto 01
+-- Verificar qnt de estoque do produto 01 --
 
 SELECT 
     ID_PRODUTO,
@@ -638,7 +611,7 @@ WHERE
 
 -- ------------------------ // ------------------------
 
--- Cancelar pedido 01
+-- Cancelar pedido 01 --
 
 DELETE FROM tbl_pedido WHERE ID_PEDIDO = 1 ;
 
@@ -646,7 +619,9 @@ COMMIT ;
 
 -- ------------------------ // ------------------------
 
--- Registrar entrada estoque -- Produto 01 | 2 unid
+-- Simulando trigger de entrada de estoque --
+
+-- Registrar entrada estoque -- Produto 01 | 2 unid --
 
 UPDATE 
     tbl_produto
@@ -659,17 +634,9 @@ WHERE
 COMMIT ;
 
 
-/* ########## AULA 06  ########## */
-
--- Criando visualizações das tabelas
-
-
 
 -- --------------- VIEW ------------------------
 
--- Produto
-
-SELECT * FROM tbl_produto ORDER BY id_Produto;
 
 --- CREATE OR REPLACE VIEW vw_tbl_produto AS
 SELECT
@@ -685,13 +652,14 @@ ORDER BY
     id_produto
     ;
 
+-- Tabela Produto | View Tabela Produto --
+
+SELECT * FROM tbl_produto ORDER BY id_Produto;
+
 SELECT * FROM vw_tbl_produto;
 
 -- ------------------------ // ------------------------
 
--- Cliente
-
-SELECT * FROM tbl_cliente ORDER BY id_cliente;
 
 -- CREATE OR REPLACE VIEW vw_tbl_cliente AS
 SELECT
@@ -711,14 +679,15 @@ ORDER BY
     ID_CLIENTE
     ;
 
+    -- Tabela Cliente | View Tabela Cliente --
+
+SELECT * FROM tbl_cliente ORDER BY id_cliente;
+
 SELECT * FROM vw_tbl_cliente;
 
 
 -- ------------------------ // ------------------------
 
--- Pedido 
-
-SELECT * FROM tbl_pedido ORDER BY  id_pedido;
 
 -- CREATE OR REPLACE VIEW vw_tbl_pedido AS
 SELECT
@@ -735,13 +704,13 @@ ORDER BY
     ID_PEDIDO
     ;
 
+-- Tabela Pedido | View Tabela Pedido -- 
+
+SELECT * FROM tbl_pedido ORDER BY  id_pedido;
+
 SELECT * FROM vw_tbl_pedido;
 
 -- ------------------------ // ------------------------
-
--- Carrinho
-
-SELECT * FROM tbl_carrinho ORDER BY id_pedido ;
 
 -- CREATE OR REPLACE VIEW vw_tbl_carrinho AS
 SELECT
@@ -759,11 +728,15 @@ ORDER BY
     ID_PEDIDO
     ;
 
+-- Tabela Carrinho | View Tabela Carrinho -- 
+
+SELECT * FROM tbl_carrinho ORDER BY id_pedido ;
+
 SELECT * FROM vw_tbl_carrinho;
 
 -- ------------------------ // ------------------------
 
--- Pedido + Carrinho
+-- Pedido + Carrinho --
 
 -- CREATE OR REPLACE VIEW vw_tbl_resumo_pedido AS
 SELECT
@@ -792,15 +765,15 @@ SELECT * FROM vw_tbl_resumo_pedido;
 
 -- ------------------------ // ------------------------
 
--- Faturamento pedidos
+-- Faturamento pedidos --
 
 -- CREATE OR REPLACE VIEW vw_tbl_faturamento_pedido AS
 SELECT
-    ID_PEDIDO                                AS  "Nº do Pedido"      ,
-    SUM(QNT_PRODUTO)                         AS  "Quantidade"        ,
-    SUM(CUSTO_PRODUTO)                       AS  "Custo Total"       ,
-    SUM(PRECO_PRODUTO)                       AS  "Lucro Total"       ,
-    SUM(PRECO_PRODUTO-CUSTO_PRODUTO)         AS  "Faturamento Total"       
+    ID_PEDIDO                                                           AS  "Nº do Pedido"      ,
+    SUM(QNT_PRODUTO)                                                    AS  "Quantidade"        ,
+    SUM(CUSTO_PRODUTO*QNT_PRODUTO)                                      AS  "Custo Total"       ,
+    SUM(PRECO_PRODUTO*QNT_PRODUTO)                                      AS  "Lucro Total"       ,
+    SUM((PRECO_PRODUTO*QNT_PRODUTO)-(CUSTO_PRODUTO*QNT_PRODUTO))        AS  "Faturamento Total"       
 FROM
     ADMIN.TBL_CARRINHO
 GROUP BY
@@ -813,15 +786,9 @@ SELECT * FROM vw_tbl_faturamento_pedido;
 
 
 
-/* ########## AULA 07  ########## */
-
--- Criando funções e testando input e output
-
-
-
 -- --------------- INPUT | OUTPUT ------------------------
 
--- Retornando quantidade de produto no estoque
+-- Retornando quantidade de produto no estoque --
 
 SET SERVEROUTPUT ON ;
 
@@ -847,7 +814,8 @@ END;
 
 -- --------------- FUNCTION ------------------------
 
--- Retornar estoque do produto
+-- Retornar estoque do produto --
+-- Parâmetro -- id do produto --
 
 CREATE OR REPLACE FUNCTION FUNC_RETORNAR_ESTOQUE(v_idProduto IN NUMBER)
 RETURN NUMBER 
@@ -865,12 +833,6 @@ END;
 SELECT FUNC_RETORNAR_ESTOQUE(1) "Estoque" FROM DUAL;
 
 
-/* ########## AULA 08  ########## */
-
--- Criando triggers
-
-
-
 -- --------------- TRIGGER ------------------------
 
 
@@ -878,17 +840,14 @@ SELECT FUNC_RETORNAR_ESTOQUE(1) "Estoque" FROM DUAL;
 -- ------------------------------------------------
 
 
-
-/* ########## AULA 09  ########## */
-
--- Criando procedimentos armazenados
--- Procedimentos para inserir registros
--- Procedimentos para coamndos DML nas tabelas | Aplicação
-
-
 -- --------------- PROCEDIMENTOS ------------------------
 
--- Sequencias
+-- Criando procedimentos armazenados --
+-- Procedimentos para inserir registros --
+-- Procedimentos para coamndos DML nas tabelas | Aplicação --
+
+
+-- Sequencias --
 
 SELECT SEQ_ID_PEDIDO.CURRVAL FROM DUAL; -- Atual
 
@@ -896,7 +855,7 @@ SELECT SEQ_ID_PEDIDO.NEXTVAL FROM DUAL; -- Próxima
 
 -- ------------------------ // ------------------------
 
--- Procedimento Zerar tabelas
+-- Procedimento Zerar tabelas --
 
 CREATE OR REPLACE PROCEDURE SP_ZERAR_TABELA
 (
@@ -939,11 +898,12 @@ EXEC SP_ZERAR_TABELA('SQ_ID_PRODUTO','TBL_PRODUTO');
 
 -- ------------------------ // ------------------------
 
+
 -- ---------- Procedimentos para inserir registros --------------------------------
 
 -- Procedimento Inserir produtos --
 
--- Passar como parâmetro o nº de registros a serem inseridos
+-- Passar como parâmetro o nº de registros a serem inseridos --
 
 CREATE OR REPLACE PROCEDURE SP_INSERIR_PRODUTOS(v_registros_inseridos IN NUMBER)
 IS
@@ -958,11 +918,11 @@ IS
 
 BEGIN
 
-    -- Deletar registros da tabela + resetar sequencia
+    -- Deletar registros da tabela + resetar sequencia --
 
     SP_ZERAR_TABELA('SQ_ID_PRODUTO','TBL_PRODUTO');
 
-    -- Inserir registros
+    -- Inserir registros --
 
     FOR CONT IN 1..v_registros_inseridos LOOP
 
@@ -978,7 +938,7 @@ BEGIN
 
     END LOOP;
 
-    -- Commit
+    -- Commit --
 
     IF SQLCODE = 0 THEN
         COMMIT;
@@ -989,7 +949,7 @@ BEGIN
         END IF;
     END IF;
 
-    -- Tratamento de erro
+    -- Tratamento de erro --
 
     EXCEPTION
     WHEN OTHERS THEN
@@ -1013,11 +973,11 @@ BEGIN
 END;
 /
 
--- Executar procedimento
+-- Executar procedimento --
 
 EXEC SP_INSERIR_PRODUTOS(50);
 
--- Retornar tabela
+-- Retornar tabela --
 
 SELECT * FROM TBL_PRODUTO;
 
@@ -1025,7 +985,7 @@ SELECT * FROM TBL_PRODUTO;
 
 -- Procedimento Inserir Clientes --
 
--- Passar como parâmetro o nº de registros a serem inseridos
+-- Passar como parâmetro o nº de registros a serem inseridos --
 
 CREATE OR REPLACE PROCEDURE SP_INSERIR_CLIENTES(v_registros_inseridos IN NUMBER)
 IS
@@ -1043,11 +1003,11 @@ IS
 
 BEGIN
 
-    -- Deletar registros da tabela + resetar sequencia
+    -- Deletar registros da tabela + resetar sequencia --
 
     SP_ZERAR_TABELA('SQ_ID_CLIENTE','TBL_CLIENTE');
 
-    -- Inserir registros
+    -- Inserir registros --
 
     FOR CONT IN 1..v_registros_inseridos LOOP
 
@@ -1082,7 +1042,7 @@ BEGIN
 
     END LOOP;
 
-    -- Commit
+    -- Commit --
 
     IF SQLCODE = 0 THEN
         COMMIT;
@@ -1093,7 +1053,7 @@ BEGIN
         END IF;
     END IF;
 
-    -- Tratamento de erro
+    -- Tratamento de erro --
 
     EXCEPTION
     WHEN OTHERS THEN
@@ -1117,11 +1077,11 @@ BEGIN
 END;
 /
 
--- Executar procedimento
+-- Executar procedimento --
 
 EXEC SP_INSERIR_CLIENTES(50);
 
--- Retornar tabela
+-- Retornar tabela --
 
 SELECT * FROM TBL_CLIENTE;
 
@@ -1130,7 +1090,7 @@ SELECT * FROM TBL_CLIENTE;
 
 -- Procedimento Inserir Pedidos --
 
--- Passar como parâmetro o nº de registros a serem inseridos
+-- Passar como parâmetro o nº de registros a serem inseridos --
 
 CREATE OR REPLACE PROCEDURE SP_INSERIR_PEDIDOS(v_registros_inseridos IN NUMBER)
 IS
@@ -1150,12 +1110,12 @@ IS
 
 BEGIN
 
-    -- Deletar registros da tabela + resetar sequencia
+    -- Deletar registros da tabela + resetar sequencia --
 
     SP_ZERAR_TABELA('SEQ_ID_PEDIDO','TBL_PEDIDO');
 
 
-    -- Inserir registros
+    -- Inserir registros --
 
     FOR CONT IN 1..v_registros_inseridos LOOP
         
@@ -1200,7 +1160,7 @@ BEGIN
             
     END LOOP;
 
-    -- Commit
+    -- Commit --
 
     IF SQLCODE = 0 THEN
         COMMIT;
@@ -1211,7 +1171,7 @@ BEGIN
         END IF;
     END IF;
 
-    -- Tratamento de erro
+    -- Tratamento de erro --
 
     EXCEPTION
     WHEN OTHERS THEN
@@ -1235,11 +1195,11 @@ BEGIN
 END;
 /
 
--- Executar procedimento
+-- Executar procedimento --
 
 EXEC SP_INSERIR_PEDIDOS(50);
 
--- Retornar tabela
+-- Retornar tabela --
 
 SELECT * FROM TBL_PEDIDO;
 SELECT * FROM TBL_CARRINHO;
@@ -1248,12 +1208,8 @@ SELECT * FROM TBL_PRODUTO;
 
 -- ------------------------ // ------------------------
 
-
-/* ########## AULA 10  ########## */
-
 -- Criando procedimentos armazenados
 -- Procedimentos para comandos DML nas tabelas | Aplicação
-
 
 
 -- ---------- Procedimentos para a aplicação --------------------------------
@@ -1265,27 +1221,22 @@ SELECT * FROM TBL_PRODUTO;
 -- ---------------------------------------------------------------------------
 
 
-
-/* ########## AULA 11  ########## */
-
--- Criando cursores
-
-
-
 -- --------------- CURSOR ------------------------
 
 
+
+
+
+
 -- -----------------------------------------------
-
-
-/* ########## AULA 12  ########## */
-
--- Criando consultas avançadas | Joins
-
 
 
 -- --------------- JOINS ------------------------
 
+-- Criando consultas avançadas --
+
+
+
 
 
 
@@ -1293,13 +1244,11 @@ SELECT * FROM TBL_PRODUTO;
 
 
 
-/* ########## AULA 13  ########## */
-
--- Criando usuários para a equipe de desenvolvimento
-
 
 
 -- --------------- USUÁRIOS ------------------------
+
+-- Criando usuários para a equipe de desenvolvimento --
 
 /* Usuários */
 
@@ -1346,7 +1295,10 @@ WHERE OWNER = 'ADMIN';
 SELECT * FROM user_tab_privs     WHERE grantee   = 'USER_DEV_01';
 
 
--- --------------- TESTES ------------------------
+-- ------------------- // ---------------------------------------
+
+
+-- --------------- RASCUNHO ------------------------
 
 
 -- Aleatório 
