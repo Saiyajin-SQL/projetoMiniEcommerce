@@ -940,7 +940,7 @@ EXEC SP_ZERAR_TABELA('SQ_ID_PRODUTO','TBL_PRODUTO');
 
 -- ---------- Procedimentos para inserir registros --------------------------------
 
--- Procedimento Inserir produtos
+-- Procedimento Inserir produtos --
 
 -- Passar como parâmetro o nº de registros a serem inseridos
 
@@ -1023,7 +1023,25 @@ SELECT * FROM TBL_PRODUTO;
 -- ------------------------ // ------------------------
 
 
+
 /* ########## AULA 10  ########## */
+
+-- Criando procedimentos armazenados
+-- Procedimentos para comandos DML nas tabelas | Aplicação
+
+
+
+-- ---------- Procedimentos para a aplicação --------------------------------
+
+
+
+
+
+-- ---------------------------------------------------------------------------
+
+
+
+/* ########## AULA 11  ########## */
 
 -- Criando cursores
 
@@ -1035,7 +1053,7 @@ SELECT * FROM TBL_PRODUTO;
 -- -----------------------------------------------
 
 
-/* ########## AULA 11  ########## */
+/* ########## AULA 12  ########## */
 
 -- Criando consultas avançadas | Joins
 
@@ -1050,7 +1068,7 @@ SELECT * FROM TBL_PRODUTO;
 
 
 
-/* ########## AULA 12  ########## */
+/* ########## AULA 13  ########## */
 
 -- Criando usuários para a equipe de desenvolvimento
 
