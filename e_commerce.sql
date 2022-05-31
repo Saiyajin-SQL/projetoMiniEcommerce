@@ -702,7 +702,7 @@ SELECT
         WHEN 'M' THEN 'Masculino'
         WHEN 'F' THEN 'Feminino'
         END                                         AS  "Gênero"        ,
-    TO_CHAR(NASCIMENTO_CLIENTE,'dd-mm-YYYY')        AS  "Nascimento"    ,
+    TO_CHAR(NASCIMENTO_CLIENTE,'dd-mm-yyyy')        AS  "Nascimento"    ,
     CELULAR_CLIENTE                                 AS  "Celular"       ,
     EMAIL_CLIENTE                                   AS  "Email"
 FROM
@@ -712,6 +712,7 @@ ORDER BY
     ;
 
 SELECT * FROM vw_tbl_cliente;
+
 
 -- ------------------------ // ------------------------
 
@@ -773,7 +774,7 @@ SELECT
         WHEN P1.SITUACAO_PAG IS NULL THEN 'Pendente' 
         ELSE                            'Pago' 
         END                                    AS  "Situação"          ,
-    TO_CHAR(P1.DATA_PEDIDO,'dd-mm-YYYY')       AS  "Data"
+    TO_CHAR(P1.DATA_PEDIDO,'dd-mm-yyyy')       AS  "Data"
 
 FROM
     ADMIN.TBL_PEDIDO    P1
@@ -1053,7 +1054,7 @@ BEGIN
         v_nomeCliente           := 'Cliente '   || CONT                                   ;
         v_sobrenomeCliente      := 'Sobrenome ' || CONT                                   ;
         v_emailCliente          := 'Cliente '   || CONT || '@xxxx.com'                                  ;
-        v_nascCliente           :=  TO_DATE(ADD_MONTHS(SYSDATE,(DBMS_RANDOM.VALUE(500,1000))*-1),'dd-mm-yyyy')  ; -- SELECT TO_DATE(ADD_MONTHS(SYSDATE,(DBMS_RANDOM.VALUE(500,1000))*-1),'dd-mm-yyyy') FROM DUAL;
+        v_nascCliente           :=  ADD_MONTHS(SYSDATE,(DBMS_RANDOM.VALUE(500,1000))*-1)  ; 
         v_celularCliente        :=  '('||ROUND(DBMS_RANDOM.VALUE(10,50))||')9'||ROUND(DBMS_RANDOM.VALUE(1000,9999))||'-'||ROUND(DBMS_RANDOM.VALUE(1000,9999));
 
         IF MOD(ROUND(DBMS_RANDOM.VALUE*20),2) = 0 THEN
@@ -1160,7 +1161,7 @@ BEGIN
         
         SELECT ID_CLIENTE INTO v_idCliente FROM (SELECT ID_CLIENTE FROM tbl_cliente ORDER BY dbms_random.value) WHERE rownum = 1;
 
-        v_dataPedido            :=  TO_DATE(SYSDATE-dbms_random.value(1,1000),'dd-mm-yyyy')                                  ; 
+        v_dataPedido            :=  SYSDATE-dbms_random.value(1,1000)                                  ; 
         
         SELECT ID_PRODUTO,ESTOQUE_PRODUTO INTO v_idProduto,v_qntProduto FROM (SELECT ID_PRODUTO,ESTOQUE_PRODUTO FROM tbl_produto WHERE ESTOQUE_PRODUTO > 0 ORDER BY dbms_random.value)  WHERE rownum = 1 ;
 
@@ -1243,12 +1244,6 @@ EXEC SP_INSERIR_PEDIDOS(50);
 SELECT * FROM TBL_PEDIDO;
 SELECT * FROM TBL_CARRINHO;
 SELECT * FROM TBL_PRODUTO;
-
-
-
-
-
-
 
 
 -- ------------------------ // ------------------------
@@ -1355,6 +1350,8 @@ SELECT * FROM user_tab_privs     WHERE grantee   = 'USER_DEV_01';
 
 
 -- Aleatório 
+
+ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY';
 
 SELECT * FROM (SELECT * FROM tbl_cliente ORDER BY dbms_random.value) WHERE rownum = 1;   
 
