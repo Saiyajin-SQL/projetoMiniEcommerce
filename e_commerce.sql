@@ -645,8 +645,6 @@ END;
 
 -- Inserir 100 produtos
 
-SET SERVEROUTPUT ON ;
-
 DECLARE 
     v_registros_inseridos   INT := 100  ;
     v_idProduto             INT ;
@@ -654,6 +652,9 @@ DECLARE
     v_precoProduto          NUMBER(9,2);
     v_custoProduto          NUMBER(9,2);
     v_estoque               INT ;
+    cursor_                 SYS_REFCURSOR;
+    v_SQLERRM                 VARCHAR2(100);
+    v_SQLCODE                 VARCHAR2(30);
 
 BEGIN
 
@@ -680,14 +681,23 @@ BEGIN
 
     IF SQLCODE = 0 THEN
         COMMIT;
-        DBMS_OUTPUT.PUT_LINE ('Dados registrados com sucesso');
+        OPEN cursor_ FOR SELECT 'Dados registrados com sucesso' "Retorno" FROM DUAL; 
+        DBMS_SQL.RETURN_RESULT(cursor_);
     END IF;
 
     EXCEPTION
     WHEN OTHERS THEN
-        DBMS_OUTPUT.PUT_LINE ('Mensagem de erro >> ' || SQLERRM);
-        DBMS_OUTPUT.PUT_LINE ('Nº de erro >> ' ||SQLCODE);
 
+        v_SQLERRM:=SQLERRM;
+        v_SQLCODE:=SQLCODE;
+
+        OPEN cursor_ FOR 
+            SELECT 
+                v_SQLERRM         AS "Mensagem de erro" ,
+                v_SQLCODE         AS "Código de erro"  
+            FROM DUAL; 
+
+        DBMS_SQL.RETURN_RESULT(cursor_);
         ROLLBACK;
 
 END;
