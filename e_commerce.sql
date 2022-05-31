@@ -1024,6 +1024,105 @@ SELECT * FROM TBL_PRODUTO;
 
 -- Procedimento Inserir Clientes --
 
+-- Passar como parâmetro o nº de registros a serem inseridos
+
+CREATE OR REPLACE PROCEDURE SP_INSERIR_CLIENTES(v_registros_inseridos IN NUMBER)
+IS
+    v_idCliente             INT                 ;   -- id do cliente
+    v_nomeCliente           VARCHAR2    (50)    ;   -- nome do cliente
+    v_sobrenomeCliente      VARCHAR2    (80)    ;   -- sobrenome do cliente
+    v_generoCliente         CHAR         (1)    ;   -- genero do cliente
+    v_nascCliente           DATE                ;   -- nascimento do cliente
+    v_celularCliente        CHAR        (14)    ;   -- celular do cliente
+    v_emailCliente          VARCHAR2    (80)    ;   -- email do cliente
+
+    cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
+    v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
+    v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
+
+BEGIN
+
+    -- Deletar registros da tabela + resetar sequencia
+
+    SP_ZERAR_TABELA('SQ_ID_CLIENTE','TBL_CLIENTE');
+
+    -- Inserir registros
+
+    FOR CONT IN 1..v_registros_inseridos LOOP
+
+        v_nomeCliente           := 'Cliente '   || CONT                                   ;
+        v_sobrenomeCliente      := 'Sobrenome ' || CONT                                   ;
+        v_emailCliente          := 'Cliente '   || CONT || '@xxxx.com'                                  ;
+        v_nascCliente           :=  TO_DATE(ADD_MONTHS(SYSDATE,(DBMS_RANDOM.VALUE(500,1000))*-1),'dd-mm-yyyy')  ; -- SELECT TO_DATE(ADD_MONTHS(SYSDATE,(DBMS_RANDOM.VALUE(500,1000))*-1),'dd-mm-yyyy') FROM DUAL;
+        v_celularCliente        :=  '('||ROUND(DBMS_RANDOM.VALUE(10,50))||')9'||ROUND(DBMS_RANDOM.VALUE(1000,9999))||'-'||ROUND(DBMS_RANDOM.VALUE(1000,9999));
+
+        IF MOD(ROUND(DBMS_RANDOM.VALUE*20),0) = 0 THEN
+
+            v_generoCliente :='M';
+
+        ELSE
+
+             v_generoCliente :='F';
+
+        END IF;
+
+        INSERT INTO 
+            ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
+        VALUES 
+            (
+            sq_id_cliente.nextval,
+            v_nomeCliente,
+            v_sobrenomeCliente,
+            v_generoCliente,
+            v_nascCliente,
+            v_celularCliente,
+            v_emailCliente
+            );
+
+    END LOOP;
+
+    -- Commit
+
+    IF SQLCODE = 0 THEN
+        COMMIT;
+        OPEN cursor_ FOR SELECT 'Dados registrados com sucesso' "Retorno" FROM DUAL; 
+        DBMS_SQL.RETURN_RESULT(cursor_);
+        IF cursor_ %ISOPEN THEN 
+            CLOSE cursor_;
+        END IF;
+    END IF;
+
+    -- Tratamento de erro
+
+    EXCEPTION
+    WHEN OTHERS THEN
+
+        v_SQLERRM:=SQLERRM;
+        v_SQLCODE:=SQLCODE;
+
+        OPEN cursor_ FOR 
+            SELECT 
+                v_SQLERRM         AS "Mensagem de erro" ,
+                v_SQLCODE         AS "Código de erro"  
+            FROM DUAL; 
+
+        DBMS_SQL.RETURN_RESULT(cursor_);
+        
+        IF cursor_ %ISOPEN THEN 
+            CLOSE cursor_;
+        END IF;
+        ROLLBACK;
+
+END;
+/
+
+-- Executar procedimento
+
+EXEC SP_INSERIR_CLIENTES(50);
+
+-- Retornar tabela
+
+SELECT * FROM TBL_CLIENTE;
 
 -- ------------------------ // ------------------------
 
@@ -1136,10 +1235,22 @@ WHERE OWNER = 'ADMIN';
 SELECT * FROM user_tab_privs     WHERE grantee   = 'USER_DEV_01';
 
 
--- --------------- OUTROS ------------------------
+-- --------------- TESTES ------------------------
 
 
 -- Aleatório 
 
 SELECT * FROM (SELECT * FROM tbl_cliente ORDER BY dbms_random.value) WHERE rownum = 1;   
 
+SELECT  
+       TO_DATE(TO_CHAR(ADD_MONTHS(SYSDATE,(DBMS_RANDOM.VALUE(500,1000))*-1),'dd-mm-yyyy'),'dd-mm-YYYY') 
+FROM DUAL
+;
+
+SELECT ROUND(to_char(sysdate, 'yyyy')-DBMS_RANDOM.VALUE*20) FROM DUAL;
+
+SELECT 
+    '('||ROUND(DBMS_RANDOM.VALUE(10,50))||')9'||ROUND(DBMS_RANDOM.VALUE(1000,9999))||'-'||ROUND(DBMS_RANDOM.VALUE(1000,9999)) 
+FROM DUAL;
+
+-- '(99)99999-9999'
