@@ -843,10 +843,10 @@ EXEC SP_ZERAR_TABELA('SQ_ID_PRODUTO','TBL_PRODUTO');
 
 -- ------------------------ // ------------------------
 
--- Inserir 100 produtos
+-- Inserir produtos
 
-DECLARE 
-    v_registros_inseridos   INT := 100          ;
+CREATE OR REPLACE PROCEDURE SP_INSERIR_PRODUTOS(v_registros_inseridos IN NUMBER)
+IS
     v_idProduto             INT                 ;
     v_nomeProduto           VARCHAR2    (50)    ;
     v_precoProduto          NUMBER      (9,2)   ;
@@ -911,6 +911,12 @@ BEGIN
 
 END;
 /
+
+-- Executar procedimento
+
+EXEC SP_INSERIR_PRODUTOS(50);
+
+-- Retornar tabela
 
 SELECT * FROM TBL_PRODUTO;
 
