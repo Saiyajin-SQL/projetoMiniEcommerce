@@ -4,7 +4,19 @@
 
 Olá Sayajin 👊💥
 
-Sejam bem-vindo ao primeiro projeto 😁✌️
+Seja bem-vindo ao primeiro projeto 😁✌️
+
+Esse projeto consiste no desenvolvimento de um e-commerce
+
+Com base nas entidades essenciais como produto,cliente e pedido
+
+Utilizei uma conta gratuita na Oracle Cloud
+
+Após isso criei um Autonomous Database gratuitamente
+
+Utilizei o prório Visual Studio Code para desenvolver o banco com o PL/SQL
+
+Para isso instalei a extensão Oracle Developer Tool for VS CODE
 
 
 ##
