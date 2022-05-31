@@ -1129,10 +1129,123 @@ SELECT * FROM TBL_CLIENTE;
 
 -- Procedimento Inserir Pedidos --
 
+-- Passar como parâmetro o nº de registros a serem inseridos
 
--- ------------------------ // ------------------------
+CREATE OR REPLACE PROCEDURE SP_INSERIR_PEDIDOS(v_registros_inseridos IN NUMBER)
+IS
+    v_idPedido              INT                 ;   -- id do pedido
+    v_idCliente             INT                 ;   -- id do cliente
+    v_situacaoPedido        CHAR         (1)    ;   -- situação do pedido
+    v_dataPedido            DATE                ;   -- data do pedido
+    
+    v_idProduto             INT                 ;   -- id do produto
+    v_qntProduto            INT                 ;   -- quantidade do produto
+    v_precoProduto          DECIMAL(9,2)        ;   -- preço do produto
+    v_custoProduto          DECIMAL(9,2)        ;   -- custo do produto
 
--- Procedimento Inserir Carrinho --
+    cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
+    v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
+    v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
+
+BEGIN
+
+    -- Deletar registros da tabela + resetar sequencia
+
+    SP_ZERAR_TABELA('SQ_ID_PEDIDO','TBL_PEDIDO');
+
+
+    -- Inserir registros
+
+    FOR CONT IN 1..v_registros_inseridos LOOP
+        
+        SELECT ID_CLIENTE INTO v_idCliente FROM (SELECT ID_CLIENTE FROM tbl_cliente ORDER BY dbms_random.value) WHERE rownum = 1;
+
+        v_dataPedido            :=  TO_DATE(SYSDATE-dbms_random.value(1,1000),'dd-mm-yyyy')                                  ; 
+        
+        SELECT ID_PRODUTO,ESTOQUE_PRODUTO INTO v_idProduto,v_qntProduto FROM (SELECT ID_PRODUTO,ESTOQUE_PRODUTO FROM tbl_produto WHERE ESTOQUE_PRODUTO > 0 ORDER BY dbms_random.value)  WHERE rownum = 1 ;
+
+        v_qntProduto := dbms_random.value(1,v_qntProduto);
+
+        SELECT PRECO_PRODUTO,CUSTO_PRODUTO INTO v_precoProduto,v_custoProduto FROM tbl_produto WHERE ID_PRODUTO = v_idProduto;
+
+        IF MOD(ROUND(DBMS_RANDOM.VALUE*20),0) = 0 THEN
+
+            v_situacaoPedido :='P';
+
+        ELSE
+
+             v_situacaoPedido :=NULL;
+
+        END IF;
+
+        INSERT INTO 
+            ADMIN.TBL_PEDIDO (ID_PEDIDO,ID_CLIENTE,SITUACAO_PAG,DATA_PEDIDO) 
+        VALUES (
+            seq_id_pedido.nextval,
+            v_idCliente,
+            v_situacaoPedido,
+            v_dataPedido);
+
+        INSERT INTO 
+            ADMIN.TBL_CARRINHO (ID_PEDIDO,ID_PRODUTO,QNT_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO) 
+        VALUES (
+            seq_id_pedido.CURRVAL,
+            v_idProduto,
+            v_qntProduto,
+            v_precoProduto,
+            v_custoProduto);
+            
+    END LOOP;
+
+    -- Commit
+
+    IF SQLCODE = 0 THEN
+        COMMIT;
+        OPEN cursor_ FOR SELECT 'Dados registrados com sucesso' "Retorno" FROM DUAL; 
+        DBMS_SQL.RETURN_RESULT(cursor_);
+        IF cursor_ %ISOPEN THEN 
+            CLOSE cursor_;
+        END IF;
+    END IF;
+
+    -- Tratamento de erro
+
+    EXCEPTION
+    WHEN OTHERS THEN
+
+        v_SQLERRM:=SQLERRM;
+        v_SQLCODE:=SQLCODE;
+
+        OPEN cursor_ FOR 
+            SELECT 
+                v_SQLERRM         AS "Mensagem de erro" ,
+                v_SQLCODE         AS "Código de erro"  
+            FROM DUAL; 
+
+        DBMS_SQL.RETURN_RESULT(cursor_);
+        
+        IF cursor_ %ISOPEN THEN 
+            CLOSE cursor_;
+        END IF;
+        ROLLBACK;
+
+END;
+/
+
+-- Executar procedimento
+
+EXEC SP_INSERIR_PEDIDOS(50);
+
+-- Retornar tabela
+
+SELECT * FROM TBL_CLIENTE;
+
+
+
+
+
+
+
 
 
 -- ------------------------ // ------------------------
