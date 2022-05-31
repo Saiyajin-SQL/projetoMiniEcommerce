@@ -19,10 +19,33 @@
 ⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠿⣛⡵⣻⠿⠟⠁⠛⠰⠿⢿⠿⡛⠉⠄⠄⢀⠄⠉⠉⢉
 ⣿⣿⣿⣿⡿⢟⠩⠉⣠⣴⣶⢆⣴⡶⠿⠟⠛⠋⠉⠩⠄⠉⢀⠠⠂⠈⠄⠐⠄⠄⠄
 
-*/
+
 
 -- Canal Sayajin SQL    >> https://www.youtube.com/channel/UC6aR2nPTkD6GECmEjQBEWtQ
 -- Github               >> https://github.com/Sayajin-SQL
+
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+.
+*/
+
+
+
+
+/* ########## AULA 01  ########## */
+
+-- Apresentação do sumário do projeto
+
 
 --------- SUMÁRIO --------------------
 
@@ -38,6 +61,14 @@
 -- 10. Cursores
 -- 11. Joins
 -- 12. Controle de Usuários
+
+
+
+/* ########## AULA 02  ########## */
+
+-- Apresentação do modelo relacional
+
+
 
 -- --------------- MODELO RELACIONAL ------------------------
 
@@ -56,6 +87,14 @@
              CARRINHO
 
 */
+
+
+
+/* ########## AULA 03  ########## */
+
+-- Criando tabelas | tipos de dados | Contraints | Sequências
+
+
 -- --------------- TABELAS ------------------------
 
 -- 1 - Produto --                                                                           
@@ -236,6 +275,14 @@ from
 where  
     table_name = UPPER('tbl_carrinho')
     ;
+
+
+
+/* ########## AULA 04  ########## */
+
+-- Inserindo registros nas tabelas
+
+
 
 -- --------------- INSERT ------------------------
 
@@ -466,6 +513,12 @@ SELECT * FROM tbl_pedido    ORDER BY id_pedido;
 SELECT * FROM tbl_carrinho  ORDER BY id_pedido;
 
 
+/* ########## AULA 05  ########## */
+
+-- Alterando registros nas tabelas
+
+
+
 -- --------------- UPDATE ------------------------
 
 -- Atualizar saída de estoque --
@@ -532,6 +585,14 @@ WHERE
 
 COMMIT ;
 
+
+
+/* ########## AULA 05  ########## */
+
+-- Deletando registros nas tabelas
+
+
+
 -- --------------- DELETE ------------------------
 
 -- Cancelando um pedido
@@ -596,6 +657,13 @@ WHERE
     ;
 
 COMMIT ;
+
+
+/* ########## AULA 06  ########## */
+
+-- Criando visualizações das tabelas
+
+
 
 -- --------------- VIEW ------------------------
 
@@ -742,6 +810,14 @@ ORDER BY
 
 SELECT * FROM vw_tbl_faturamento_pedido;
 
+
+
+/* ########## AULA 07  ########## */
+
+-- Criando funções e testando input e output
+
+
+
 -- --------------- INPUT | OUTPUT ------------------------
 
 -- Retornando quantidade de produto no estoque
@@ -788,7 +864,26 @@ END;
 SELECT FUNC_RETORNAR_ESTOQUE(1) "Estoque" FROM DUAL;
 
 
+/* ########## AULA 08  ########## */
+
+-- Criando triggers
+
+
+
 -- --------------- TRIGGER ------------------------
+
+
+
+-- ------------------------------------------------
+
+
+
+/* ########## AULA 09  ########## */
+
+-- Criando procedimentos armazenados
+-- Procedimentos para inserir registros
+-- Procedimentos para coamndos DML nas tabelas | Aplicação
+
 
 -- --------------- PROCEDIMENTOS ------------------------
 
@@ -800,7 +895,7 @@ SELECT SEQ_ID_PEDIDO.NEXTVAL FROM DUAL; -- Próxima
 
 -- ------------------------ // ------------------------
 
--- Zerar tabelas
+-- Procedimento Zerar tabelas
 
 CREATE OR REPLACE PROCEDURE SP_ZERAR_TABELA
 (
@@ -843,22 +938,27 @@ EXEC SP_ZERAR_TABELA('SQ_ID_PRODUTO','TBL_PRODUTO');
 
 -- ------------------------ // ------------------------
 
--- Inserir produtos
+-- ---------- Procedimentos para inserir registros --------------------------------
+
+-- Procedimento Inserir produtos
+
+-- Passar como parâmetro o nº de registros a serem inseridos
 
 CREATE OR REPLACE PROCEDURE SP_INSERIR_PRODUTOS(v_registros_inseridos IN NUMBER)
 IS
-    v_idProduto             INT                 ;
-    v_nomeProduto           VARCHAR2    (50)    ;
-    v_precoProduto          NUMBER      (9,2)   ;
-    v_custoProduto          NUMBER      (9,2)   ;
-    v_estoque               INT                 ;
-    cursor_                 SYS_REFCURSOR       ;
-    v_SQLERRM               VARCHAR2    (100)   ;
-    v_SQLCODE               VARCHAR2    (30)    ;
+    v_idProduto             INT                 ;   -- id do produto
+    v_nomeProduto           VARCHAR2    (50)    ;   -- nome do produto
+    v_precoProduto          NUMBER      (9,2)   ;   -- preço do produto
+    v_custoProduto          NUMBER      (9,2)   ;   -- custo do produto
+    v_estoque               INT                 ;   -- estoque do produto
+    cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
+    v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
+    v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
 
 BEGIN
 
     -- Deletar registros da tabela + resetar sequencia
+
     SP_ZERAR_TABELA('SQ_ID_PRODUTO','TBL_PRODUTO');
 
     -- Inserir registros
@@ -922,9 +1022,39 @@ SELECT * FROM TBL_PRODUTO;
 
 -- ------------------------ // ------------------------
 
+
+/* ########## AULA 10  ########## */
+
+-- Criando cursores
+
+
+
 -- --------------- CURSOR ------------------------
 
+
+-- -----------------------------------------------
+
+
+/* ########## AULA 11  ########## */
+
+-- Criando consultas avançadas | Joins
+
+
+
 -- --------------- JOINS ------------------------
+
+
+
+
+-- -----------------------------------------------
+
+
+
+/* ########## AULA 12  ########## */
+
+-- Criando usuários para a equipe de desenvolvimento
+
+
 
 -- --------------- USUÁRIOS ------------------------
 
