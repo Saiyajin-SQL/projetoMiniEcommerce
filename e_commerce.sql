@@ -643,18 +643,64 @@ END;
 
 -- --------------- PROCEDIMENTOS ------------------------
 
+-- Sequencias
+
+SELECT SEQ_ID_PEDIDO.CURRVAL FROM DUAL; -- Atual
+
+SELECT SEQ_ID_PEDIDO.NEXTVAL FROM DUAL; -- Próxima
+
+-- Zerar tabelas
+
+CREATE OR REPLACE PROCEDURE SP_ZERAR_TABELA
+(
+                                                v_seq_name      in  VARCHAR2    ,
+                                                v_nome_tabela   in  VARCHAR2
+)
+
+IS
+    v_valor_seq         NUMBER          ;
+    cursor_             SYS_REFCURSOR   ;
+    
+BEGIN
+    EXECUTE IMMEDIATE
+    'DELETE FROM ' || v_nome_tabela;
+    EXECUTE IMMEDIATE
+    'SELECT ' || v_seq_name || ' .NEXTVAL FROM DUAL' INTO v_valor_seq;
+
+    EXECUTE IMMEDIATE
+    'ALTER SEQUENCE ' || v_seq_name || ' INCREMENT BY -' || v_valor_seq || ' MINVALUE 0';
+
+    EXECUTE IMMEDIATE
+    'SELECT ' || v_seq_name || ' .NEXTVAL FROM DUAL' INTO v_valor_seq;
+
+    EXECUTE IMMEDIATE
+    'ALTER SEQUENCE ' || v_seq_name || ' INCREMENT BY 1 MINVALUE 0';
+
+    OPEN cursor_ FOR SELECT 'Tabela ' || v_nome_tabela || ' Zerada' " Retorno" FROM DUAL; 
+    DBMS_SQL.RETURN_RESULT(cursor_);
+    IF cursor_ %ISOPEN THEN
+        CLOSE cursor_;
+    END IF;
+END;
+/
+
+
+EXEC SP_ZERAR_TABELA('SEQ_ID_PEDIDO','TBL_PEDIDO');
+EXEC SP_ZERAR_TABELA('SQ_ID_CLIENTE','TBL_CLIENTE');
+EXEC SP_ZERAR_TABELA('SQ_ID_PRODUTO','TBL_PRODUTO');
+
 -- Inserir 100 produtos
 
 DECLARE 
-    v_registros_inseridos   INT := 100  ;
-    v_idProduto             INT ;
-    v_nomeProduto           VARCHAR2(50);
-    v_precoProduto          NUMBER(9,2);
-    v_custoProduto          NUMBER(9,2);
-    v_estoque               INT ;
-    cursor_                 SYS_REFCURSOR;
-    v_SQLERRM                 VARCHAR2(100);
-    v_SQLCODE                 VARCHAR2(30);
+    v_registros_inseridos   INT := 100          ;
+    v_idProduto             INT                 ;
+    v_nomeProduto           VARCHAR2    (50)    ;
+    v_precoProduto          NUMBER      (9,2)   ;
+    v_custoProduto          NUMBER      (9,2)   ;
+    v_estoque               INT                 ;
+    cursor_                 SYS_REFCURSOR       ;
+    v_SQLERRM               VARCHAR2    (100)   ;
+    v_SQLCODE               VARCHAR2    (30)    ;
 
 BEGIN
 
@@ -679,11 +725,16 @@ BEGIN
 
     END LOOP;
 
+    -- Commit
+
     IF SQLCODE = 0 THEN
         COMMIT;
         OPEN cursor_ FOR SELECT 'Dados registrados com sucesso' "Retorno" FROM DUAL; 
         DBMS_SQL.RETURN_RESULT(cursor_);
+        CLOSE cursor_;
     END IF;
+
+    -- Tratamento de erro
 
     EXCEPTION
     WHEN OTHERS THEN
@@ -698,6 +749,7 @@ BEGIN
             FROM DUAL; 
 
         DBMS_SQL.RETURN_RESULT(cursor_);
+        CLOSE cursor_;
         ROLLBACK;
 
 END;
@@ -757,38 +809,6 @@ SELECT * FROM user_tab_privs     WHERE grantee   = 'USER_DEV_01';
 
 
 -- --------------- OUTROS ------------------------
-
--- Sequencias
-
-SELECT SEQ_ID_PEDIDO.CURRVAL FROM DUAL; -- Atual
-
-SELECT SEQ_ID_PEDIDO.NEXTVAL FROM DUAL; -- Próxima
-
--- Zerar sequencia
-
-CREATE OR REPLACE PROCEDURE SP_RESET_SEQ(v_seq_name in VARCHAR2)
-IS
-    v_valor_seq NUMBER;
-BEGIN
-    EXECUTE IMMEDIATE
-    'SELECT ' || v_seq_name || ' .NEXTVAL FROM DUAL' INTO v_valor_seq;
-
-    EXECUTE IMMEDIATE
-    'ALTER SEQUENCE ' || v_seq_name || ' INCREMENT BY -' || v_valor_seq || ' MINVALUE 0';
-
-    EXECUTE IMMEDIATE
-    'SELECT ' || v_seq_name || ' .NEXTVAL FROM DUAL' INTO v_valor_seq;
-
-    EXECUTE IMMEDIATE
-    'ALTER SEQUENCE ' || v_seq_name || ' INCREMENT BY 1 MINVALUE 0';
-
-END;
-
-BEGIN
-    SP_RESET_SEQ('SEQ_ID_PEDIDO');
-    SP_RESET_SEQ('SQ_ID_CLIENTE');
-    SP_RESET_SEQ('SQ_ID_PRODUTO');
-END;
 
 
 -- Aleatório 
