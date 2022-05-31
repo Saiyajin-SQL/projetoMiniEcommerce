@@ -1056,7 +1056,7 @@ BEGIN
         v_nascCliente           :=  TO_DATE(ADD_MONTHS(SYSDATE,(DBMS_RANDOM.VALUE(500,1000))*-1),'dd-mm-yyyy')  ; -- SELECT TO_DATE(ADD_MONTHS(SYSDATE,(DBMS_RANDOM.VALUE(500,1000))*-1),'dd-mm-yyyy') FROM DUAL;
         v_celularCliente        :=  '('||ROUND(DBMS_RANDOM.VALUE(10,50))||')9'||ROUND(DBMS_RANDOM.VALUE(1000,9999))||'-'||ROUND(DBMS_RANDOM.VALUE(1000,9999));
 
-        IF MOD(ROUND(DBMS_RANDOM.VALUE*20),0) = 0 THEN
+        IF MOD(ROUND(DBMS_RANDOM.VALUE*20),2) = 0 THEN
 
             v_generoCliente :='M';
 
@@ -1151,7 +1151,7 @@ BEGIN
 
     -- Deletar registros da tabela + resetar sequencia
 
-    SP_ZERAR_TABELA('SQ_ID_PEDIDO','TBL_PEDIDO');
+    SP_ZERAR_TABELA('SEQ_ID_PEDIDO','TBL_PEDIDO');
 
 
     -- Inserir registros
@@ -1168,7 +1168,7 @@ BEGIN
 
         SELECT PRECO_PRODUTO,CUSTO_PRODUTO INTO v_precoProduto,v_custoProduto FROM tbl_produto WHERE ID_PRODUTO = v_idProduto;
 
-        IF MOD(ROUND(DBMS_RANDOM.VALUE*20),0) = 0 THEN
+        IF MOD(ROUND(DBMS_RANDOM.VALUE*20),2) = 0 THEN
 
             v_situacaoPedido :='P';
 
@@ -1194,6 +1194,8 @@ BEGIN
             v_qntProduto,
             v_precoProduto,
             v_custoProduto);
+
+        UPDATE TBL_PRODUTO SET ESTOQUE_PRODUTO = ESTOQUE_PRODUTO - v_qntProduto WHERE ID_PRODUTO = v_idProduto;
             
     END LOOP;
 
@@ -1238,8 +1240,9 @@ EXEC SP_INSERIR_PEDIDOS(50);
 
 -- Retornar tabela
 
-SELECT * FROM TBL_CLIENTE;
-
+SELECT * FROM TBL_PEDIDO;
+SELECT * FROM TBL_CARRINHO;
+SELECT * FROM TBL_PRODUTO;
 
 
 
