@@ -108,9 +108,9 @@ CREATE TABLE tbl_produto (
     /* Sequência */
 
 CREATE SEQUENCE sq_id_produto
-START WITH 1
-INCREMENT BY 1
-NOCACHE
+START WITH      1
+INCREMENT BY    1
+CACHE           20
 ;
 
     /* Informações */
@@ -159,9 +159,9 @@ CREATE TABLE tbl_cliente (
     /* Sequência */
 
 CREATE SEQUENCE sq_id_cliente
-START WITH 1
-INCREMENT BY 1
-NOCACHE
+START WITH      1
+INCREMENT BY    1
+CACHE           20
 ;
 
     /* Informações */
@@ -203,9 +203,9 @@ CREATE TABLE tbl_pedido (
     /* Sequência */
 
 CREATE SEQUENCE seq_id_pedido
-START WITH 1
-INCREMENT BY 1
-NOCACHE
+START WITH      1
+INCREMENT BY    1
+CACHE           20
 ;
 
     /* Informações */
@@ -840,10 +840,115 @@ SELECT FUNC_RETORNAR_ESTOQUE(1) "Estoque" FROM DUAL;
 
 -- Entrada no estoque | Delete | Produto | Tabela carrinho  
 
+CREATE OR REPLACE TRIGGER TRG_ENTRADA_ESTOQUE
+AFTER DELETE ON TBL_CARRINHO
+FOR EACH ROW
+BEGIN
+    
+    UPDATE TBL_PRODUTO SET ESTOQUE_PRODUTO = ESTOQUE_PRODUTO + :OLD.QNT_PRODUTO WHERE ID_PRODUTO = :OLD.ID_PRODUTO;
+
+END;
+
+-- ------------------------ // -----------------------------------
+
 -- Saída no estoque | Insert | Produto | Tabela carrinho  
+
+CREATE OR REPLACE TRIGGER TRG_SAIDA_ESTOQUE
+AFTER INSERT ON TBL_CARRINHO
+FOR EACH ROW
+BEGIN
+    
+    UPDATE TBL_PRODUTO SET ESTOQUE_PRODUTO = ESTOQUE_PRODUTO - :NEW.QNT_PRODUTO WHERE ID_PRODUTO = :NEW.ID_PRODUTO;
+
+END;
+
+-- ------------------------ // -----------------------------------
 
 -- Saída ou Entrada no estoque | Update | Produto | Tabela carrinho 
 
+CREATE OR REPLACE TRIGGER TRG_ENTRADA_SAIDA_ESTOQUE
+AFTER UPDATE ON TBL_CARRINHO
+FOR EACH ROW
+DECLARE
+    v_diferenca INT;
+BEGIN
+    IF :NEW.QNT_PRODUTO > :OLD.QNT_PRODUTO THEN
+        v_diferenca:=:NEW.QNT_PRODUTO-:OLD.QNT_PRODUTO;
+        -- Valor novo > antigo
+        UPDATE TBL_PRODUTO SET ESTOQUE_PRODUTO = ESTOQUE_PRODUTO - v_diferenca WHERE ID_PRODUTO = :NEW.ID_PRODUTO;
+    ELSIF :NEW.QNT_PRODUTO < :OLD.QNT_PRODUTO THEN
+         v_diferenca:=:OLD.QNT_PRODUTO-:NEW.QNT_PRODUTO;
+        -- Valor novo < antigo
+        UPDATE TBL_PRODUTO SET ESTOQUE_PRODUTO = ESTOQUE_PRODUTO + v_diferenca WHERE ID_PRODUTO = :OLD.ID_PRODUTO;
+    END IF;
+
+END;
+
+-- ------------------------ // -----------------------------------
+
+-- Saída e Entrada no estoque | Insert ou Update ou delete | Produto | Tabela carrinho 
+
+CREATE OR REPLACE TRIGGER TRG_CONTROLE_ESTOQUE
+AFTER INSERT OR UPDATE OR DELETE ON TBL_CARRINHO
+FOR EACH ROW
+DECLARE
+    v_diferenca INT;
+BEGIN
+
+    IF INSERTING THEN
+
+        UPDATE TBL_PRODUTO SET ESTOQUE_PRODUTO = ESTOQUE_PRODUTO - :NEW.QNT_PRODUTO WHERE ID_PRODUTO = :NEW.ID_PRODUTO;
+
+    ELSIF UPDATING THEN
+
+        IF :NEW.QNT_PRODUTO > :OLD.QNT_PRODUTO THEN
+            v_diferenca:=:NEW.QNT_PRODUTO-:OLD.QNT_PRODUTO;
+            -- Valor novo > antigo
+            UPDATE TBL_PRODUTO SET ESTOQUE_PRODUTO = ESTOQUE_PRODUTO - v_diferenca WHERE ID_PRODUTO = :NEW.ID_PRODUTO;
+        ELSIF :NEW.QNT_PRODUTO < :OLD.QNT_PRODUTO THEN
+            v_diferenca:=:OLD.QNT_PRODUTO-:NEW.QNT_PRODUTO;
+            -- Valor novo < antigo
+            UPDATE TBL_PRODUTO SET ESTOQUE_PRODUTO = ESTOQUE_PRODUTO + v_diferenca WHERE ID_PRODUTO = :OLD.ID_PRODUTO;
+        END IF;
+
+    ELSIF DELETING THEN
+
+        UPDATE TBL_PRODUTO SET ESTOQUE_PRODUTO = ESTOQUE_PRODUTO - :NEW.QNT_PRODUTO WHERE ID_PRODUTO = :NEW.ID_PRODUTO;
+
+    END IF;
+
+END;
+
+
+-- Testando Triggers --
+
+-- Estoque Produto 01 -- 58 unidades --
+
+SELECT ESTOQUE_PRODUTO FROM TBL_PRODUTO WHERE ID_PRODUTO = 1;
+
+-- Carrinho -- 4 unidades --
+
+SELECT * FROM TBL_CARRINHO WHERE ID_PRODUTO = 1;
+
+-- Update -- Carinho -- Retirando 1 unidade --
+
+UPDATE 
+    TBL_CARRINHO
+SET
+    QNT_PRODUTO = QNT_PRODUTO - 1
+WHERE 
+    ID_PRODUTO = 1
+    ;
+
+-- Update -- Carinho -- Adicionando 1 unidade --
+
+UPDATE 
+    TBL_CARRINHO
+SET
+    QNT_PRODUTO = QNT_PRODUTO + 1
+WHERE 
+    ID_PRODUTO = 1
+    ;
 
 
 -- ------------------------------------------------
@@ -1165,7 +1270,7 @@ BEGIN
             v_precoProduto,
             v_custoProduto);
 
-        UPDATE TBL_PRODUTO SET ESTOQUE_PRODUTO = ESTOQUE_PRODUTO - v_qntProduto WHERE ID_PRODUTO = v_idProduto;
+        --UPDATE TBL_PRODUTO SET ESTOQUE_PRODUTO = ESTOQUE_PRODUTO - v_qntProduto WHERE ID_PRODUTO = v_idProduto;
             
     END LOOP;
 
@@ -1231,6 +1336,8 @@ SELECT * FROM TBL_PRODUTO;
 
 
 -- --------------- CURSOR ------------------------
+
+
 
 
 
