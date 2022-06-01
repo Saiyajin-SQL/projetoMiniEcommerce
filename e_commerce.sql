@@ -1322,11 +1322,80 @@ SELECT * FROM TBL_PRODUTO;
 
 -- ------------------------ // ------------------------
 
--- Criando procedimentos armazenados
--- Procedimentos para comandos DML nas tabelas | Aplicação
-
 
 -- ---------- Procedimentos para a aplicação --------------------------------
+
+-- Criando procedimentos armazenados
+-- Procedimentos para comandos DML nas tabelas | Aplicação
+-- Insert (I) | Update (U) | Delete (D)
+
+
+-- Procedimentos Produtos --
+
+
+CREATE OR REPLACE PROCEDURE SP_PROCEDIMENTOS_PRODUTOS
+(                                                       v_procedimento      CHAR        (1)         , -- Tipo de procedimento >> Insert (I) | Update (U) | Delete (D)
+                                                        v_idProduto         INT                     , -- id do produto
+                                                        v_nomeProduto       VARCHAR2    (50)        , -- nome do produto
+                                                        v_precoProduto      DECIMAL     (9,2)       , -- preço do produto
+                                                        v_custoProduto      DECIMAL     (9,2)       , -- estoque do produto
+                                                        v_estoqueProduto    INT
+                                                        
+)
+IS
+    v_registros              INT                 ;   -- qnt de registros retornados
+
+    cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
+    v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
+    v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
+
+    -- EXCEPTION --
+
+    v_procedimentoIncorreto EXCEPTION;
+
+BEGIN
+
+    -- Verificações básicas --
+
+    
+    IF v_procedimento NOT IN ('I','U','D') THEN -- Verificar se o procedimento está correto
+
+
+
+    END IF;
+
+    IF SQLCODE = 0 THEN -- Verificar se deu erro --
+        COMMIT; -- Comitar --
+        OPEN cursor_ FOR SELECT 'Dados registrados com sucesso' "Retorno" FROM DUAL; -- Mensagem de retorno --
+        DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --
+        IF cursor_ %ISOPEN THEN -- Verificar se o cursor está aberto --
+            CLOSE cursor_; -- Fechar cursor --
+        END IF;
+    END IF;
+
+    -- Tratamento de erro --
+
+    EXCEPTION
+    WHEN OTHERS THEN
+
+        v_SQLERRM:=SQLERRM;
+        v_SQLCODE:=SQLCODE;
+
+        OPEN cursor_ FOR 
+            SELECT 
+                v_SQLERRM         AS "Mensagem de erro" ,
+                v_SQLCODE         AS "Código de erro"  
+            FROM DUAL; 
+
+        DBMS_SQL.RETURN_RESULT(cursor_);
+        
+        IF cursor_ %ISOPEN THEN 
+            CLOSE cursor_;
+        END IF;
+        ROLLBACK;
+
+END;
+/
 
 
 
