@@ -1332,14 +1332,15 @@ SELECT * FROM TBL_PRODUTO;
 
 -- Procedimentos Produtos --
 
+EXEC SP_PROCEDIMENTOS_PRODUTOS(NULL,1,'Produto01',100.00,120.00,10);
 
 CREATE OR REPLACE PROCEDURE SP_PROCEDIMENTOS_PRODUTOS
-(                                                       v_procedimento      CHAR        (1)         , -- Tipo de procedimento >> Insert (I) | Update (U) | Delete (D)
-                                                        v_idProduto         INT                     , -- id do produto
-                                                        v_nomeProduto       VARCHAR2    (50)        , -- nome do produto
-                                                        v_precoProduto      DECIMAL     (9,2)       , -- preço do produto
-                                                        v_custoProduto      DECIMAL     (9,2)       , -- estoque do produto
-                                                        v_estoqueProduto    INT
+(                                                       v_procedimento      IN VARCHAR2         , -- Tipo de procedimento >> Insert (I) | Update (U) | Delete (D)
+                                                        v_idProduto         IN NUMBER           , -- id do produto
+                                                        v_nomeProduto       IN VARCHAR2         , -- nome do produto
+                                                        v_precoProduto      IN DECIMAL          , -- preço do produto
+                                                        v_custoProduto      IN DECIMAL          , -- custo do produto
+                                                        v_estoqueProduto    IN NUMBER             -- estoque do produto
                                                         
 )
 IS
@@ -1351,48 +1352,81 @@ IS
 
     -- EXCEPTION --
 
-    v_procedimentoIncorreto EXCEPTION;
+    v_camposObrigatorios    EXCEPTION; -- Campos obrigatórios
+    v_procedimentoIncorreto EXCEPTION; -- Erro tipo de procedimento
 
 BEGIN
 
     -- Verificações básicas --
 
-    
-    IF v_procedimento NOT IN ('I','U','D') THEN -- Verificar se o procedimento está correto
+    IF v_procedimento NOT IN ('I','U','D') OR v_procedimento IS NULL THEN -- Verificar se o procedimento está correto
 
-
+        RAISE v_procedimentoIncorreto; -- ERRO 
 
     END IF;
 
-    IF SQLCODE = 0 THEN -- Verificar se deu erro --
+    -- DML --
+
+    CASE 
+
+        WHEN v_procedimento IN ('I','U') THEN -- Insert or update
+
+            IF v_nomeProduto IS NULL OR v_precoProduto IS NULL OR v_custoProduto IS NULL OR v_estoqueProduto IS NULL THEN
+
+                RAISE v_camposObrigatorios; -- ERRO 
+
+            END IF;
+
+
+        WHEN v_procedimento = 'D' THEN -- delete
+
+            DBMS_OUTPUT.PUT_LINE('CURSOR FECAHDO');
+
+    
+    END CASE;
+
+    /*IF SQLCODE = 0 THEN -- Verificar se deu erro --
         COMMIT; -- Comitar --
         OPEN cursor_ FOR SELECT 'Dados registrados com sucesso' "Retorno" FROM DUAL; -- Mensagem de retorno --
         DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --
         IF cursor_ %ISOPEN THEN -- Verificar se o cursor está aberto --
             CLOSE cursor_; -- Fechar cursor --
         END IF;
-    END IF;
+    END IF;*/
 
     -- Tratamento de erro --
 
     EXCEPTION
-    WHEN OTHERS THEN
+
+    WHEN v_procedimentoIncorreto THEN -- Erro no tipo de procedimento
+        OPEN cursor_ FOR SELECT 'Procedimento válido: Insert (I) | Update (U) | Delete (D)' "Retorno" FROM DUAL; -- Mensagem de retorno --
+        DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --
+        GOTO FECHAR_CURSOR; -- Fechar cursor
+
+    WHEN v_camposObrigatorios THEN -- Campos obrigatórios
+        OPEN cursor_ FOR SELECT 'Campos Obrigatórios: Nome | Preço | Custo | Estoque' "Retorno" FROM DUAL; -- Mensagem de retorno --
+        DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --
+        GOTO FECHAR_CURSOR; -- Fechar cursor
+
+    WHEN OTHERS THEN -- Outro erro
 
         v_SQLERRM:=SQLERRM;
         v_SQLCODE:=SQLCODE;
 
         OPEN cursor_ FOR 
             SELECT 
-                v_SQLERRM         AS "Mensagem de erro" ,
-                v_SQLCODE         AS "Código de erro"  
+                v_SQLERRM         AS "Mensagem de erro" , -- Retornar mensagem de erro
+                v_SQLCODE         AS "Código de erro"     -- Retornar código do erro
             FROM DUAL; 
 
-        DBMS_SQL.RETURN_RESULT(cursor_);
-        
-        IF cursor_ %ISOPEN THEN 
-            CLOSE cursor_;
-        END IF;
-        ROLLBACK;
+        DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --
+        GOTO FECHAR_CURSOR; -- Fechar cursor
+        ROLLBACK; -- Rollback
+
+    <<FECHAR_CURSOR>>
+     IF cursor_ %ISOPEN THEN -- Verificar se o cursor está aberto --
+            CLOSE cursor_; -- Fechar cursor --
+    END IF;
 
 END;
 /
@@ -1581,3 +1615,6 @@ SELECT
 FROM DUAL;
 
 -- '(99)99999-9999'
+
+
+SELECT LENGTH('') "Sem trim",NVL(LENGTH(TRIM('')),0) "Com trim" FROM DUAL;
