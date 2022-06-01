@@ -671,6 +671,7 @@ SELECT
         WHEN 'F' THEN 'Feminino'
         END                                         AS  "Gênero"        ,
     TO_CHAR(NASCIMENTO_CLIENTE,'dd-mm-yyyy')        AS  "Nascimento"    ,
+    trunc((months_between(sysdate, to_date(NASCIMENTO_CLIENTE,'dd/mm/yyyy')))/12) AS "Idade",
     CELULAR_CLIENTE                                 AS  "Celular"       ,
     EMAIL_CLIENTE                                   AS  "Email"
 FROM
@@ -834,6 +835,14 @@ SELECT FUNC_RETORNAR_ESTOQUE(1) "Estoque" FROM DUAL;
 
 
 -- --------------- TRIGGER ------------------------
+
+-- Controlar saída e entrada do estoque --
+
+-- Entrada no estoque | Delete | Produto | Tabela carrinho  
+
+-- Saída no estoque | Insert | Produto | Tabela carrinho  
+
+-- Saída ou Entrada no estoque | Update | Produto | Tabela carrinho 
 
 
 
@@ -1235,10 +1244,56 @@ SELECT * FROM TBL_PRODUTO;
 
 -- Criando consultas avançadas --
 
+-- Top 10 Clientes que mais realizaram pedidos --
 
+SELECT * FROM (
 
+SELECT
+    C1.ID_CLIENTE                                               AS      "ID Cliente"            ,
+    C1.NOME_CLIENTE || ' ' || C1.SOBRENOME_CLIENTE              AS      "Nome Completo"         ,
+    SUM((SELECT 
+        COUNT(ID_PEDIDO) 
+    FROM 
+        TBL_PEDIDO 
+    WHERE 
+        ID_CLIENTE = C1.ID_CLIENTE))                             AS       "Total de pedidos"
 
+FROM
+    TBL_CLIENTE C1
+INNER JOIN
+    TBL_PEDIDO P1
+ON
+    C1.ID_CLIENTE = P1.ID_CLIENTE
+GROUP BY
+    C1.ID_CLIENTE,C1.NOME_CLIENTE || ' ' || C1.SOBRENOME_CLIENTE
+ORDER BY
+    "Total de pedidos" DESC
 
+) 
+
+WHERE ROWNUM <= 10
+
+;
+
+-- Top 10 Produtos mais vendidos --
+
+-- Top 10 Produtos com maior faturamento --
+
+-- Top 10 clientes com mais pedidos pendentes --
+
+-- Produtos zerados no estoque --
+
+-- Produto com maior custo --
+
+-- Produto com maior faturamento --
+
+-- Faturamento Mensal --
+
+-- Mês com maior faturamento --
+
+-- Mês com menor faturamento --
+
+-- Mês com maior prejuízo --
 
 -- -----------------------------------------------
 
