@@ -1332,7 +1332,8 @@ SELECT * FROM TBL_PRODUTO;
 
 -- Procedimentos Produtos --
 
-EXEC SP_PROCEDIMENTOS_PRODUTOS(NULL,1,'Produto01',100.00,120.00,10);
+EXEC SP_PROCEDIMENTOS_PRODUTOS('I',NULL,'Produto 01',180.99,150.99,1);
+SELECT * FROM TBL_PRODUTO;
 
 CREATE OR REPLACE PROCEDURE SP_PROCEDIMENTOS_PRODUTOS
 (                                                       v_procedimento      IN VARCHAR2         , -- Tipo de procedimento >> Insert (I) | Update (U) | Delete (D)
@@ -1349,11 +1350,15 @@ IS
     cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
     v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
     v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
+    v_msgRetorno            VARCHAR2    (100)   ;   -- Mensagem de retorno
 
     -- EXCEPTION --
 
     v_camposObrigatorios    EXCEPTION; -- Campos obrigatórios
+    v_idObrigatorio         EXCEPTION; -- ID obrigatório
     v_procedimentoIncorreto EXCEPTION; -- Erro tipo de procedimento
+    v_valoresNegativos      EXCEPTION; -- Valores Negativos
+    v_precoMaiorCusto       EXCEPTION; -- Preço maior que o custo
 
 BEGIN
 
@@ -1371,61 +1376,138 @@ BEGIN
 
         WHEN v_procedimento IN ('I','U') THEN -- Insert or update
 
-            IF v_nomeProduto IS NULL OR v_precoProduto IS NULL OR v_custoProduto IS NULL OR v_estoqueProduto IS NULL THEN
+            IF v_nomeProduto IS NULL OR v_precoProduto IS NULL OR v_custoProduto IS NULL THEN
 
                 RAISE v_camposObrigatorios; -- ERRO 
 
+            ELSIF v_idProduto IS NULL AND v_procedimento = 'U'  THEN -- Verificar o id do produto
+
+                RAISE v_idObrigatorio; -- ERRO 
+
+            ELSIF v_precoProduto <=0 OR v_custoProduto <= 0 OR v_estoqueProduto <0 THEN -- Verificar se o preço ,custo e estoque são maiores que 0
+
+                RAISE v_valoresNegativos; -- ERRO 
+
+            ELSIF v_precoProduto <= v_custoProduto THEN -- Verificar se o preço é maior que o custo
+
+                RAISE v_precoMaiorCusto; -- ERRO 
+
             END IF;
 
+        
+            IF v_procedimento = 'I' THEN -- Insert --
+
+                INSERT INTO 
+                    ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
+                VALUES 
+                    (sq_id_produto.nextval,v_nomeProduto,v_precoProduto,v_custoProduto,NULLIF(v_estoqueProduto,0))
+                    ;
+
+                v_msgRetorno := 'Produto cadastrado com sucesso' ; -- Mensagem de retorno
+
+            ELSIF v_procedimento = 'U' THEN -- Update --
+
+                UPDATE 
+                    ADMIN.TBL_PRODUTO 
+                SET 
+                    NOME_PRODUTO        =   v_nomeProduto   ,
+                    PRECO_PRODUTO       =   v_precoProduto  ,
+                    CUSTO_PRODUTO       =   v_custoProduto  ,
+                    ESTOQUE_PRODUTO     =   NULLIF(v_estoqueProduto,0)
+                WHERE
+                    ID_PRODUTO = v_idProduto
+                    ;
+
+                v_msgRetorno := 'Produto alterado com sucesso' ; -- Mensagem de retorno
+
+            END IF;
 
         WHEN v_procedimento = 'D' THEN -- delete
 
-            DBMS_OUTPUT.PUT_LINE('CURSOR FECAHDO');
+            IF v_idProduto IS NULL  THEN -- Verificar o id do produto
+
+                RAISE v_idObrigatorio; -- ERRO 
+
+            ELSE
+
+                 DELETE FROM 
+                    ADMIN.TBL_PRODUTO 
+                WHERE
+                    ID_PRODUTO = v_idProduto
+                    ;
+
+                v_msgRetorno := 'Produto excluído com sucesso' ; -- Mensagem de retorno
+                
+
+            END IF;
 
     
     END CASE;
 
-    /*IF SQLCODE = 0 THEN -- Verificar se deu erro --
+    -- Commit --
+
+    IF SQLCODE = 0 THEN -- Verificar se deu erro --
         COMMIT; -- Comitar --
-        OPEN cursor_ FOR SELECT 'Dados registrados com sucesso' "Retorno" FROM DUAL; -- Mensagem de retorno --
-        DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --
+        OPEN cursor_ FOR SELECT v_msgRetorno "Retorno" FROM DUAL; -- Mensagem de retorno --
+        DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --    
         IF cursor_ %ISOPEN THEN -- Verificar se o cursor está aberto --
             CLOSE cursor_; -- Fechar cursor --
         END IF;
-    END IF;*/
+
+        OPEN cursor_ FOR SELECT * FROM TBL_PRODUTO ORDER BY ID_PRODUTO; -- Retornar tabela de produtos --
+        DBMS_SQL.RETURN_RESULT(cursor_); -- retornar tabela --    
+        IF cursor_ %ISOPEN THEN -- Verificar se o cursor está aberto --
+            CLOSE cursor_; -- Fechar cursor --
+        END IF;
+
+
+    END IF;
+
 
     -- Tratamento de erro --
 
     EXCEPTION
 
     WHEN v_procedimentoIncorreto THEN -- Erro no tipo de procedimento
-        OPEN cursor_ FOR SELECT 'Procedimento válido: Insert (I) | Update (U) | Delete (D)' "Retorno" FROM DUAL; -- Mensagem de retorno --
-        DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --
-        GOTO FECHAR_CURSOR; -- Fechar cursor
+        v_msgRetorno := 'Procedimento válido: Insert (I) | Update (U) | Delete (D)' ; -- Mensagem de retorno
+        GOTO LAB_FINALIZAR_PROCEDIMENTO; -- Fechar cursor
 
     WHEN v_camposObrigatorios THEN -- Campos obrigatórios
-        OPEN cursor_ FOR SELECT 'Campos Obrigatórios: Nome | Preço | Custo | Estoque' "Retorno" FROM DUAL; -- Mensagem de retorno --
-        DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --
-        GOTO FECHAR_CURSOR; -- Fechar cursor
+        v_msgRetorno := 'Campos Obrigatórios: Nome | Preço | Custo ' ; -- Mensagem de retorno
+        GOTO LAB_FINALIZAR_PROCEDIMENTO; -- Fechar cursor
+
+    WHEN v_idObrigatorio THEN -- id nulo
+        v_msgRetorno := 'É necessário informar o ID do produto para realizar alterações e exclusões' ; -- Mensagem de retorno
+        GOTO LAB_FINALIZAR_PROCEDIMENTO; -- Fechar cursor
+
+    WHEN v_valoresNegativos THEN -- preço ou custo ou estoque menores ou igual a 0
+        v_msgRetorno := 'O preço e custo devem ser maiores que 0 e o estoque maior ou igual a 0' ; -- Mensagem de retorno
+        GOTO LAB_FINALIZAR_PROCEDIMENTO; -- Fechar cursor
+
+    WHEN v_precoMaiorCusto THEN -- preço maior custo
+        v_msgRetorno := 'O preço deve ser maior que o custo' ; -- Mensagem de retorno
+        GOTO LAB_FINALIZAR_PROCEDIMENTO; -- Fechar cursor
 
     WHEN OTHERS THEN -- Outro erro
 
-        v_SQLERRM:=SQLERRM;
-        v_SQLCODE:=SQLCODE;
+        v_SQLERRM := SQLERRM ;
+        v_SQLCODE := SQLCODE ;
 
-        OPEN cursor_ FOR 
-            SELECT 
-                v_SQLERRM         AS "Mensagem de erro" , -- Retornar mensagem de erro
-                v_SQLCODE         AS "Código de erro"     -- Retornar código do erro
-            FROM DUAL; 
-
-        DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --
-        GOTO FECHAR_CURSOR; -- Fechar cursor
+        v_msgRetorno := 'Nª do erro: ' || v_SQLCODE || ' | Mensagem: ' || v_SQLERRM ; -- Mensagem de retorno
+        GOTO LAB_FINALIZAR_PROCEDIMENTO; -- Fechar cursor
         ROLLBACK; -- Rollback
 
-    <<FECHAR_CURSOR>>
-     IF cursor_ %ISOPEN THEN -- Verificar se o cursor está aberto --
-            CLOSE cursor_; -- Fechar cursor --
+-- Encerrando procedimento --
+
+    <<LAB_FINALIZAR_PROCEDIMENTO>> -- Label
+
+    -- Retornar mensagem --
+
+    OPEN cursor_ FOR SELECT v_msgRetorno "Retorno" FROM DUAL; -- Mensagem de retorno --
+    DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --
+    
+    IF cursor_ %ISOPEN THEN -- Verificar se o cursor está aberto --
+        CLOSE cursor_; -- Fechar cursor --
     END IF;
 
 END;
