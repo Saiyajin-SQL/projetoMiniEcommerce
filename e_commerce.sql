@@ -739,7 +739,7 @@ SELECT * FROM vw_tbl_carrinho;
 
 -- Pedido + Carrinho --
 
--- CREATE OR REPLACE VIEW vw_tbl_resumo_pedido AS
+--CREATE OR REPLACE VIEW vw_tbl_resumo_pedido AS
 SELECT
     P1.ID_PEDIDO                               AS  "Nº Pedido"           ,
     SUM(C1.QNT_PRODUTO)                        AS  "Quantidade"          ,
@@ -1337,11 +1337,42 @@ SELECT * FROM TBL_PRODUTO;
 
 -- --------------- CURSOR ------------------------
 
+-- View Resumo dos pedidos --
 
+SELECT * FROM vw_tbl_resumo_pedido WHERE "Situação" = 'Pendente' ORDER BY TO_DATE("Data");
 
+-- Imprimir na tela todos os pedidos pendentes --
 
+SET SERVEROUTPUT ON
 
+DECLARE
+    v_idPedido      INT             ;
+    v_qntProduto    INT             ;
+    v_Total         DECIMAL(9,2)    ;
+    v_situacao      VARCHAR(8)      ;
+    v_data          DATE            ;
 
+    CURSOR v_cursor 
+    IS
+        SELECT * FROM vw_tbl_resumo_pedido WHERE "Situação" = 'Pendente' ORDER BY TO_DATE("Data");
+
+BEGIN
+
+    OPEN v_cursor;
+
+    LOOP
+        FETCH v_cursor INTO v_idPedido,v_qntProduto,v_Total,v_situacao,v_data;
+        EXIT WHEN v_cursor%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE('Pedido: ' || v_idPedido);
+        DBMS_OUTPUT.PUT_LINE('Qnt: ' || v_qntProduto || ' unid');
+        DBMS_OUTPUT.PUT_LINE('Valor: R$' || v_Total);
+        DBMS_OUTPUT.PUT_LINE('Situação: ' || v_situacao);
+        DBMS_OUTPUT.PUT_LINE('Data: ' || TO_CHAR(v_data,'dd-mm-yyyy'));
+        DBMS_OUTPUT.PUT_LINE('------------------------------------------');
+    END LOOP;
+
+    CLOSE v_cursor;
+END;
 
 
 -- -----------------------------------------------
