@@ -1329,11 +1329,31 @@ SELECT * FROM TBL_PRODUTO;
 -- Procedimentos para comandos DML nas tabelas | Aplicação
 -- Insert (I) | Update (U) | Delete (D)
 
+-- Procedimento para retornar uma tabela usando cursor
+
+EXEC SP_RETORNAR_TABELA('SELECT * FROM TBL_PRODUTO');
+
+CREATE OR REPLACE PROCEDURE SP_RETORNAR_TABELA(v_consulta      IN VARCHAR2)
+IS
+    cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
+    v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
+    v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
+BEGIN
+
+    OPEN cursor_ FOR v_consulta; -- Mensagem de retorno --
+    DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --    
+    IF cursor_ %ISOPEN THEN -- Verificar se o cursor está aberto --
+        CLOSE cursor_; -- Fechar cursor --
+    END IF;
+
+END;
+
+-- --------------------------------------------- // ----------------------------------------------
+
 
 -- Procedimentos Produtos --
 
-EXEC SP_PROCEDIMENTOS_PRODUTOS('I',NULL,'Produto 01',180.99,150.99,1);
-SELECT * FROM TBL_PRODUTO;
+EXEC SP_PROCEDIMENTOS_PRODUTOS('I',NULL,'Produto 01',NULL,150.99,1);
 
 CREATE OR REPLACE PROCEDURE SP_PROCEDIMENTOS_PRODUTOS
 (                                                       v_procedimento      IN VARCHAR2         , -- Tipo de procedimento >> Insert (I) | Update (U) | Delete (D)
@@ -1447,19 +1467,11 @@ BEGIN
     -- Commit --
 
     IF SQLCODE = 0 THEN -- Verificar se deu erro --
+
         COMMIT; -- Comitar --
-        OPEN cursor_ FOR SELECT v_msgRetorno "Retorno" FROM DUAL; -- Mensagem de retorno --
-        DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --    
-        IF cursor_ %ISOPEN THEN -- Verificar se o cursor está aberto --
-            CLOSE cursor_; -- Fechar cursor --
-        END IF;
 
-        OPEN cursor_ FOR SELECT * FROM TBL_PRODUTO ORDER BY ID_PRODUTO; -- Retornar tabela de produtos --
-        DBMS_SQL.RETURN_RESULT(cursor_); -- retornar tabela --    
-        IF cursor_ %ISOPEN THEN -- Verificar se o cursor está aberto --
-            CLOSE cursor_; -- Fechar cursor --
-        END IF;
-
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL');
+        SP_RETORNAR_TABELA('SELECT * FROM TBL_PRODUTO ORDER BY ID_PRODUTO');
 
     END IF;
 
@@ -1470,23 +1482,23 @@ BEGIN
 
     WHEN v_procedimentoIncorreto THEN -- Erro no tipo de procedimento
         v_msgRetorno := 'Procedimento válido: Insert (I) | Update (U) | Delete (D)' ; -- Mensagem de retorno
-        GOTO LAB_FINALIZAR_PROCEDIMENTO; -- Fechar cursor
+       SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
     WHEN v_camposObrigatorios THEN -- Campos obrigatórios
         v_msgRetorno := 'Campos Obrigatórios: Nome | Preço | Custo ' ; -- Mensagem de retorno
-        GOTO LAB_FINALIZAR_PROCEDIMENTO; -- Fechar cursor
+       SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
     WHEN v_idObrigatorio THEN -- id nulo
         v_msgRetorno := 'É necessário informar o ID do produto para realizar alterações e exclusões' ; -- Mensagem de retorno
-        GOTO LAB_FINALIZAR_PROCEDIMENTO; -- Fechar cursor
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
     WHEN v_valoresNegativos THEN -- preço ou custo ou estoque menores ou igual a 0
         v_msgRetorno := 'O preço e custo devem ser maiores que 0 e o estoque maior ou igual a 0' ; -- Mensagem de retorno
-        GOTO LAB_FINALIZAR_PROCEDIMENTO; -- Fechar cursor
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
     WHEN v_precoMaiorCusto THEN -- preço maior custo
         v_msgRetorno := 'O preço deve ser maior que o custo' ; -- Mensagem de retorno
-        GOTO LAB_FINALIZAR_PROCEDIMENTO; -- Fechar cursor
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
     WHEN OTHERS THEN -- Outro erro
 
@@ -1494,21 +1506,10 @@ BEGIN
         v_SQLCODE := SQLCODE ;
 
         v_msgRetorno := 'Nª do erro: ' || v_SQLCODE || ' | Mensagem: ' || v_SQLERRM ; -- Mensagem de retorno
-        GOTO LAB_FINALIZAR_PROCEDIMENTO; -- Fechar cursor
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
         ROLLBACK; -- Rollback
 
--- Encerrando procedimento --
-
-    <<LAB_FINALIZAR_PROCEDIMENTO>> -- Label
-
-    -- Retornar mensagem --
-
-    OPEN cursor_ FOR SELECT v_msgRetorno "Retorno" FROM DUAL; -- Mensagem de retorno --
-    DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --
     
-    IF cursor_ %ISOPEN THEN -- Verificar se o cursor está aberto --
-        CLOSE cursor_; -- Fechar cursor --
-    END IF;
 
 END;
 /
