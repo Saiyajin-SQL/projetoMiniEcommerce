@@ -1167,11 +1167,8 @@ BEGIN
 
     IF SQLCODE = 0 THEN
         COMMIT;
-        OPEN cursor_ FOR SELECT 'Dados registrados com sucesso' "Retorno" FROM DUAL; 
-        DBMS_SQL.RETURN_RESULT(cursor_);
-        IF cursor_ %ISOPEN THEN 
-            CLOSE cursor_;
-        END IF;
+        SP_RETORNAR_TABELA('SELECT ''Dados inseridos com sucesso'' FROM DUAL'); -- Retornar mensagem
+        SP_RETORNAR_TABELA('SELECT * FROM TBL_CLIENTE ORDER BY ID_CLIENTE'); -- Retornar tabela
     END IF;
 
     -- Tratamento de erro --
@@ -1182,17 +1179,8 @@ BEGIN
         v_SQLERRM:=SQLERRM;
         v_SQLCODE:=SQLCODE;
 
-        OPEN cursor_ FOR 
-            SELECT 
-                v_SQLERRM         AS "Mensagem de erro" ,
-                v_SQLCODE         AS "Código de erro"  
-            FROM DUAL; 
+        SP_RETORNAR_TABELA('SELECT ''Código: ' || v_SQLCODE || '| Mensagem: ' || v_SQLERRM ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
-        DBMS_SQL.RETURN_RESULT(cursor_);
-        
-        IF cursor_ %ISOPEN THEN 
-            CLOSE cursor_;
-        END IF;
         ROLLBACK;
 
 END;
@@ -1202,9 +1190,6 @@ END;
 
 EXEC SP_INSERIR_CLIENTES(50);
 
--- Retornar tabela --
-
-SELECT * FROM TBL_CLIENTE;
 
 -- ------------------------ // ------------------------
 
@@ -1285,11 +1270,9 @@ BEGIN
 
     IF SQLCODE = 0 THEN
         COMMIT;
-        OPEN cursor_ FOR SELECT 'Dados registrados com sucesso' "Retorno" FROM DUAL; 
-        DBMS_SQL.RETURN_RESULT(cursor_);
-        IF cursor_ %ISOPEN THEN 
-            CLOSE cursor_;
-        END IF;
+        SP_RETORNAR_TABELA('SELECT ''Dados inseridos com sucesso'' FROM DUAL'); -- Retornar mensagem
+        SP_RETORNAR_TABELA('SELECT * FROM TBL_PEDIDO ORDER BY ID_PEDIDO'); -- Retornar tabela
+        SP_RETORNAR_TABELA('SELECT * FROM TBL_CARRINHO ORDER BY ID_PEDIDO'); -- Retornar tabela
     END IF;
 
     -- Tratamento de erro --
@@ -1300,17 +1283,8 @@ BEGIN
         v_SQLERRM:=SQLERRM;
         v_SQLCODE:=SQLCODE;
 
-        OPEN cursor_ FOR 
-            SELECT 
-                v_SQLERRM         AS "Mensagem de erro" ,
-                v_SQLCODE         AS "Código de erro"  
-            FROM DUAL; 
+        SP_RETORNAR_TABELA('SELECT ''Código: ' || v_SQLCODE || '| Mensagem: ' || v_SQLERRM ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
-        DBMS_SQL.RETURN_RESULT(cursor_);
-        
-        IF cursor_ %ISOPEN THEN 
-            CLOSE cursor_;
-        END IF;
         ROLLBACK;
 
 END;
@@ -1320,11 +1294,6 @@ END;
 
 EXEC SP_INSERIR_PEDIDOS(50);
 
--- Retornar tabela --
-
-SELECT * FROM TBL_PEDIDO;
-SELECT * FROM TBL_CARRINHO;
-SELECT * FROM TBL_PRODUTO;
 
 
 -- ------------------------ // ------------------------
@@ -1471,7 +1440,7 @@ BEGIN
 
     WHEN v_procedimentoIncorreto THEN -- Erro no tipo de procedimento
         v_msgRetorno := 'Procedimento válido: Insert (I) | Update (U) | Delete (D)' ; -- Mensagem de retorno
-       SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
     WHEN v_camposObrigatorios THEN -- Campos obrigatórios
         v_msgRetorno := 'Campos Obrigatórios: Nome | Preço | Custo ' ; -- Mensagem de retorno
@@ -1502,9 +1471,6 @@ BEGIN
 
 END;
 /
-
-
-
 
 
 -- ---------------------------------------------------------------------------
@@ -1665,11 +1631,18 @@ SELECT * FROM user_tab_privs     WHERE grantee   = 'USER_DEV_01';
 
 -- ------------------- // ---------------------------------------
 
+-- --------------- TAREFAS ------------------------
+
+-- 1. Revisar o código
+-- 2. Criar procedimentos para cliente
+-- 3. Criar procedimentos para produto
+-- 4. Criar consultas avançadas
+
 
 -- --------------- RASCUNHO ------------------------
 
 
--- Aleatório 
+-- Aleatório --
 
 ALTER SESSION SET NLS_DATE_FORMAT = 'DD-MM-YYYY';
 
