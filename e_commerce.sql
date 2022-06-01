@@ -64,6 +64,8 @@
 
 -- 1. Entidades 
 
+/*
+
     -- 1.1 Produto      (Forte)
     -- 1.2 Cliente      (Forte)
     -- 1.3 Pedido       (Fraca)
@@ -71,13 +73,13 @@
 
 
 
-    -- PRODUTO --N---N-- PEDIDO -N---1- CLIENTE  
---                 |
---                 |
-             -- CARRINHO
+     PRODUTO --N---N-- PEDIDO -N---1- CLIENTE  
+                 |
+                 |
+              CARRINHO
 
 
-
+*/
 
 
 -- --------------- TABELAS ------------------------
@@ -273,12 +275,32 @@ where
 
 -- Produto 1 --
 
+-- Informações --
+
+-- ID       : 1
+-- Nome     : Produto_1
+-- Preço    : R$ 99,99
+-- Custo    : R$ 50,99
+-- Estoque  : 10 unid
+
+-- SQL --
+
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
 VALUES 
     (sq_id_produto.nextval,'Produto_1',99.99,50.99,10);
 
 -- Produto 2 --
+
+-- Informações --
+
+-- ID       : 2
+-- Nome     : Produto_2
+-- Preço    : R$ 199,99
+-- Custo    : R$ 150,99
+-- Estoque  : 5 unid
+
+-- SQL --
 
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
@@ -287,12 +309,30 @@ VALUES
 
 -- Produto 3 --
 
+-- Informações --
+
+-- ID       : 3
+-- Nome     : Produto_3
+-- Preço    : R$ 299,99
+-- Custo    : R$ 250,99
+-- Estoque  : 6 unid
+
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
 VALUES 
     (sq_id_produto.nextval,'Produto_3',299.99,250.99,6);
 
 -- Produto 4 --
+
+-- Informações --
+
+-- ID       : 4
+-- Nome     : Produto_4
+-- Preço    : R$ 399,99
+-- Custo    : R$ 200,99
+-- Estoque  : 5 unid
+
+-- SQL --
 
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
@@ -301,10 +341,21 @@ VALUES
 
 -- Produto 5 --
 
+-- Informações --
+
+-- ID       : 5
+-- Nome     : Produto_5
+-- Preço    : R$ 259,99
+-- Custo    : R$ 230,99
+-- Estoque  : 0 unid
+
+-- SQL --
+
 INSERT INTO 
     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
 VALUES 
     (sq_id_produto.nextval,'Produto_5',259.99,230.99,NULL);
+
 
 -- Comitando inserts --
 
@@ -1311,7 +1362,6 @@ EXEC SP_INSERIR_PEDIDOS(50);
 
 -- Procedimentos Produtos --
 
-EXEC SP_PROCEDIMENTOS_PRODUTOS('I',NULL,'Produto 01',NULL,150.99,1);
 
 CREATE OR REPLACE PROCEDURE SP_PROCEDIMENTOS_PRODUTOS
 (                                                       v_procedimento      IN VARCHAR2         , -- Tipo de procedimento >> Insert (I) | Update (U) | Delete (D)
@@ -1334,6 +1384,7 @@ IS
 
     v_camposObrigatorios    EXCEPTION; -- Campos obrigatórios
     v_idObrigatorio         EXCEPTION; -- ID obrigatório
+    v_idExiste              EXCEPTION; -- Verificar se o ID existe
     v_procedimentoIncorreto EXCEPTION; -- Erro tipo de procedimento
     v_valoresNegativos      EXCEPTION; -- Valores Negativos
     v_precoMaiorCusto       EXCEPTION; -- Preço maior que o custo
@@ -1385,6 +1436,12 @@ BEGIN
 
             ELSIF v_procedimento = 'U' THEN -- Update --
 
+                SELECT COUNT(ID_PRODUTO) INTO v_registros FROM TBL_PRODUTO WHERE ID_PRODUTO = v_idProduto; -- Retornar qnt de id
+
+                IF v_registros = 0 THEN -- Verificar se existe o produto
+                    RAISE v_idExiste; -- erro
+                END IF;
+
                 UPDATE 
                     ADMIN.TBL_PRODUTO 
                 SET 
@@ -1407,6 +1464,12 @@ BEGIN
                 RAISE v_idObrigatorio; -- ERRO 
 
             ELSE
+
+                SELECT COUNT(ID_PRODUTO) INTO v_registros FROM TBL_PRODUTO WHERE ID_PRODUTO = v_idProduto; -- Retornar qnt de id
+
+                IF v_registros = 0 THEN -- Verificar se existe o produto
+                    RAISE v_idExiste; -- erro
+                END IF;
 
                  DELETE FROM 
                     ADMIN.TBL_PRODUTO 
@@ -1458,6 +1521,10 @@ BEGIN
         v_msgRetorno := 'O preço deve ser maior que o custo' ; -- Mensagem de retorno
         SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
+    WHEN v_idExiste THEN -- Verificar se o id existe
+        v_msgRetorno := 'Produto não cadastrado' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
     WHEN OTHERS THEN -- Outro erro
 
         v_SQLERRM := SQLERRM ;
@@ -1471,6 +1538,42 @@ BEGIN
 
 END;
 /
+
+
+-- Executar comando --
+
+-- Insert --
+
+EXEC SP_PROCEDIMENTOS_PRODUTOS('I',NULL,'Produto ZYZZ',170.99,150.99,1);
+
+-- Update --
+
+EXEC SP_PROCEDIMENTOS_PRODUTOS('U',52,'Produto Zysnei',170.99,150.99,1);
+
+-- Delete --
+
+EXEC SP_PROCEDIMENTOS_PRODUTOS('D',52,NULL,NULL,NULL,NULL);
+
+
+-- --------------------------------------------- // ----------------------------------------------
+
+
+-- Procedimentos Clientes --
+
+
+
+
+
+
+
+-- --------------------------------------------- // ----------------------------------------------
+
+
+-- Procedimentos Pedidos --
+
+
+
+
 
 
 -- ---------------------------------------------------------------------------
