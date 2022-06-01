@@ -1336,8 +1336,6 @@ EXEC SP_RETORNAR_TABELA('SELECT * FROM TBL_PRODUTO');
 CREATE OR REPLACE PROCEDURE SP_RETORNAR_TABELA(v_consulta      IN VARCHAR2)
 IS
     cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
-    v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
-    v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
 BEGIN
 
     OPEN cursor_ FOR v_consulta; -- Mensagem de retorno --
