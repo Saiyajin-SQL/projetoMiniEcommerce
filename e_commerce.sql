@@ -967,6 +967,25 @@ SELECT SEQ_ID_PEDIDO.CURRVAL FROM DUAL; -- Atual
 
 SELECT SEQ_ID_PEDIDO.NEXTVAL FROM DUAL; -- Próxima
 
+-- Procedimento para retornar uma tabela usando cursor
+
+CREATE OR REPLACE PROCEDURE SP_RETORNAR_TABELA(v_consulta      IN VARCHAR2)
+IS
+    cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
+BEGIN
+
+    OPEN cursor_ FOR v_consulta; -- Mensagem de retorno --
+    DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --    
+    IF cursor_ %ISOPEN THEN -- Verificar se o cursor está aberto --
+        CLOSE cursor_; -- Fechar cursor --
+    END IF;
+
+END;
+
+-- Executando
+
+EXEC SP_RETORNAR_TABELA('SELECT * FROM TBL_PRODUTO');
+
 -- ------------------------ // ------------------------
 
 -- Procedimento Zerar tabelas --
@@ -996,11 +1015,8 @@ BEGIN
     EXECUTE IMMEDIATE
     'ALTER SEQUENCE ' || v_seq_name || ' INCREMENT BY 1 MINVALUE 0';
 
-    OPEN cursor_ FOR SELECT 'Tabela ' || v_nome_tabela || ' Zerada' " Retorno" FROM DUAL; 
-    DBMS_SQL.RETURN_RESULT(cursor_);
-    IF cursor_ %ISOPEN THEN
-        CLOSE cursor_;
-    END IF;
+    SP_RETORNAR_TABELA('SELECT ''Tabela ' || v_nome_tabela || ' Zerada'' "Retorno" FROM DUAL');
+
 END;
 /
 
@@ -1056,11 +1072,9 @@ BEGIN
 
     IF SQLCODE = 0 THEN
         COMMIT;
-        OPEN cursor_ FOR SELECT 'Dados registrados com sucesso' "Retorno" FROM DUAL; 
-        DBMS_SQL.RETURN_RESULT(cursor_);
-        IF cursor_ %ISOPEN THEN 
-            CLOSE cursor_;
-        END IF;
+        SP_RETORNAR_TABELA('SELECT ''Dados inseridos com sucesso'' FROM DUAL'); -- Retornar mensagem
+        SP_RETORNAR_TABELA('SELECT * FROM TBL_PRODUTO ORDER BY ID_PRODUTO'); -- Retornar tabela
+
     END IF;
 
     -- Tratamento de erro --
@@ -1071,17 +1085,9 @@ BEGIN
         v_SQLERRM:=SQLERRM;
         v_SQLCODE:=SQLCODE;
 
-        OPEN cursor_ FOR 
-            SELECT 
-                v_SQLERRM         AS "Mensagem de erro" ,
-                v_SQLCODE         AS "Código de erro"  
-            FROM DUAL; 
-
-        DBMS_SQL.RETURN_RESULT(cursor_);
+        SP_RETORNAR_TABELA('SELECT ''Código: ' || v_SQLCODE || '| Mensagem: ' || v_SQLERRM ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
         
-        IF cursor_ %ISOPEN THEN 
-            CLOSE cursor_;
-        END IF;
+
         ROLLBACK;
 
 END;
@@ -1089,11 +1095,12 @@ END;
 
 -- Executar procedimento --
 
+ALTER TRIGGER TRG_CONTROLE_ESTOQUE DISABLE; -- Inativar trigger
+
 EXEC SP_INSERIR_PRODUTOS(50);
 
--- Retornar tabela --
+ALTER TRIGGER TRG_CONTROLE_ESTOQUE ENABLE; -- ativar trigger
 
-SELECT * FROM TBL_PRODUTO;
 
 -- ------------------------ // ------------------------
 
@@ -1329,22 +1336,6 @@ SELECT * FROM TBL_PRODUTO;
 -- Procedimentos para comandos DML nas tabelas | Aplicação
 -- Insert (I) | Update (U) | Delete (D)
 
--- Procedimento para retornar uma tabela usando cursor
-
-EXEC SP_RETORNAR_TABELA('SELECT * FROM TBL_PRODUTO');
-
-CREATE OR REPLACE PROCEDURE SP_RETORNAR_TABELA(v_consulta      IN VARCHAR2)
-IS
-    cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
-BEGIN
-
-    OPEN cursor_ FOR v_consulta; -- Mensagem de retorno --
-    DBMS_SQL.RETURN_RESULT(cursor_); -- retornar mensagem --    
-    IF cursor_ %ISOPEN THEN -- Verificar se o cursor está aberto --
-        CLOSE cursor_; -- Fechar cursor --
-    END IF;
-
-END;
 
 -- --------------------------------------------- // ----------------------------------------------
 
