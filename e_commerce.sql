@@ -2173,7 +2173,7 @@ END;
 
 -- Insert --
 
-EXEC SP_PROCEDIMENTOS_PEDIDOS('I',NULL,1,'P','10-10-2022');
+EXEC SP_PROCEDIMENTOS_PEDIDOS('I',NULL,5,'P','10-10-2022');
 
 -- Update --
 
@@ -2190,20 +2190,207 @@ EXEC SP_PROCEDIMENTOS_PEDIDOS('D',1,NULL,NULL,NULL);
 -- Procedimentos Carrinho --
 
 
+CREATE OR REPLACE PROCEDURE SP_PROCEDIMENTOS_CARRINHO
+(                                                       v_procedimento      IN VARCHAR2         , -- Tipo de procedimento >> Insert (I) | Update (U) | Delete (D)
+                                                        v_idPedido          IN NUMBER           , -- id do pedido
+                                                        v_idProduto         IN NUMBER           , -- id do produto
+                                                        v_qntProduto        IN NUMBER             -- qnt do produto
+                                                        
+)
+IS
+    v_registros              INT                 ;   -- qnt de registros retornados
+
+    v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
+    v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
+    v_msgRetorno            VARCHAR2    (100)   ;   -- Mensagem de retorno
+
+    v_precoProduto          DECIMAL     (9,2)    ; -- Preço do produto
+    v_custoProduto          DECIMAL     (9,2)    ; -- Custo do produto
 
 
+    -- EXCEPTION --
+
+    v_camposObrigatorios        EXCEPTION; -- Campos obrigatórios
+    v_idObrigatorio             EXCEPTION; -- ID obrigatório
+    v_idExiste                  EXCEPTION; -- Verificar se o ID existe
+    v_procedimentoIncorreto     EXCEPTION; -- Erro tipo de procedimento
+
+    v_verificarPedidoProduto    EXCEPTION; -- Verificar se o pedido e o produto existem
+
+    v_verificarProdutoDuplicado  EXCEPTION; -- Verificar se o produto existe
+
+    v_checkQuantidade           EXCEPTION; -- Verificar se a qnt é maior que 0
 
 
+BEGIN
+
+    -- Verificações básicas --
+
+    IF v_procedimento NOT IN ('I','U','D') OR v_procedimento IS NULL THEN -- Verificar se o procedimento está correto
+
+        RAISE v_procedimentoIncorreto; -- ERRO 
+
+    END IF;
+
+    -- DML --
+
+    CASE 
+
+        WHEN v_procedimento IN ('I','U') THEN -- Insert or update
+
+            IF v_idPedido IS NULL OR v_idProduto IS NULL OR v_qntProduto IS NULL THEN -- Campos obrigatórios
+
+                RAISE v_camposObrigatorios; -- ERRO 
+
+            ELSIF (v_idPedido IS NULL OR v_idProduto IS NULL) AND v_procedimento = 'U'  THEN -- Verificar o id do produto + pedido
+
+                RAISE v_idObrigatorio; -- ERRO 
+
+            ELSIF v_qntProduto <= 0 THEN -- Verificar o qnt
+
+                RAISE v_checkQuantidade; -- ERRO 
+
+               
+            END IF;
+
+             IF v_procedimento IN ('U','D')  THEN
+
+                SELECT COUNT(*) INTO v_registros FROM TBL_CARRINHO WHERE ID_PEDIDO = v_idPedido AND ID_PRODUTO = v_idProduto; -- Verificar se o produto existe
+
+                IF v_registros = 0 OR v_idPedido IS NULL THEN
+                    
+                    RAISE v_verificarPedidoProduto;
+
+                END IF;
+
+            END IF;
+
+            IF v_procedimento = 'I' THEN -- Insert --
+
+                 SELECT COUNT(*) INTO v_registros FROM TBL_CARRINHO WHERE ID_PEDIDO = v_idPedido AND ID_PRODUTO = v_idProduto; -- Verificar se o produto existe
+
+                IF v_registros > 0 THEN
+                    
+                    RAISE v_verificarProdutoDuplicado;
+
+                END IF;
+
+                INSERT INTO 
+                    ADMIN.TBL_CARRINHO (ID_PEDIDO,ID_PRODUTO,QNT_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO) 
+                VALUES (
+                    v_idPedido,
+                    v_idProduto,
+                    v_qntProduto,
+                    (SELECT PRECO_PRODUTO FROM tbl_produto WHERE id_produto = v_idProduto),
+                    (SELECT CUSTO_PRODUTO FROM tbl_produto WHERE id_produto = v_idProduto))
+                    ;
+
+                v_msgRetorno := 'Produto adicionado ao carrinho' ; -- Mensagem de retorno
+
+            ELSIF v_procedimento = 'U' THEN -- Update --
+
+                UPDATE 
+                    ADMIN.TBL_CARRINHO 
+                SET 
+                    QNT_PRODUTO         =   v_qntProduto,
+                    PRECO_PRODUTO       =   (SELECT PRECO_PRODUTO FROM tbl_produto WHERE id_produto = v_idProduto)  ,
+                    CUSTO_PRODUTO       =   (SELECT CUSTO_PRODUTO FROM tbl_produto WHERE id_produto = v_idProduto)
+                WHERE
+                    ID_PEDIDO = v_idPedido
+                AND
+                    ID_PRODUTO = v_idProduto
+                    ;
+
+                v_msgRetorno := 'Produto alterado com sucesso' ; -- Mensagem de retorno
+
+            END IF;
+
+        WHEN v_procedimento = 'D' THEN -- delete
+
+                DELETE FROM 
+                ADMIN.TBL_CARRINHO 
+            WHERE
+                 ID_PEDIDO = v_idPedido
+            AND
+                ID_PRODUTO = v_idProduto
+                ;
+
+            v_msgRetorno := 'Produto excluído com sucesso' ; -- Mensagem de retorno
+            
+    END CASE;
+
+    -- Commit --
+
+    IF SQLCODE = 0 THEN -- Verificar se deu erro --
+
+        COMMIT; -- Comitar --
+
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL');
+        SP_RETORNAR_TABELA('SELECT * FROM TBL_CARRINHO ORDER BY ID_PEDIDO');
+
+    END IF;
 
 
+    -- Tratamento de erro --
+
+    EXCEPTION
+
+    WHEN v_procedimentoIncorreto THEN -- Erro no tipo de procedimento
+        v_msgRetorno := 'Procedimento válido: Insert (I) | Update (U) | Delete (D)' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_camposObrigatorios THEN -- Campos obrigatórios
+        v_msgRetorno := 'Campos Obrigatórios: id do Pedido | id do Produto | Quantidade ' ; -- Mensagem de retorno
+       SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_idObrigatorio THEN -- id nulo
+        v_msgRetorno := 'É necessário informar o ID do pedido e o ID do produto para realizar alterações e exclusões' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_checkQuantidade THEN -- Verificar pagamento
+        v_msgRetorno := 'A quantidade deve ser maior que 0' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_idExiste THEN -- Verificar se o id pedido existe
+        v_msgRetorno := 'Pedido não cadastrado' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_verificarPedidoProduto THEN -- Verificar se o pedido e produto existem no carrinho
+        v_msgRetorno := 'Produto não adicionado ao carrinho' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
 
+    WHEN OTHERS THEN -- Outro erro
+
+        v_SQLERRM := SQLERRM ;
+        v_SQLCODE := SQLCODE ;
+
+        v_msgRetorno := 'Nª do erro: ' || v_SQLCODE || ' | Mensagem: ' || v_SQLERRM ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+        ROLLBACK; -- Rollback
+
+    
+
+END;
+/
 
 
+-- Executar comando --
 
+SELECT * FROM TBL_PEDIDO WHERE ID_PEDIDO = 2;
+SELECT * FROM TBL_CARRINHO WHERE ID_PEDIDO = 2;
 
+-- Insert --
 
+EXEC SP_PROCEDIMENTOS_CARRINHO('I',2,41,2);
 
+-- Update --
+
+EXEC SP_PROCEDIMENTOS_CARRINHO('U',2,41,5);
+
+-- Delete --
+
+EXEC SP_PROCEDIMENTOS_CARRINHO('D',2,41,NULL);
 
 
 
