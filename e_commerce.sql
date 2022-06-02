@@ -112,7 +112,7 @@ CREATE TABLE tbl_produto (
 CREATE SEQUENCE sq_id_produto
 START WITH      1
 INCREMENT BY    1
-CACHE           20
+NOMAXVALUE
 ;
 
     /* Informações */
@@ -163,7 +163,7 @@ CREATE TABLE tbl_cliente (
 CREATE SEQUENCE sq_id_cliente
 START WITH      1
 INCREMENT BY    1
-CACHE           20
+NOMAXVALUE
 ;
 
     /* Informações */
@@ -207,7 +207,7 @@ CREATE TABLE tbl_pedido (
 CREATE SEQUENCE seq_id_pedido
 START WITH      1
 INCREMENT BY    1
-CACHE           20
+NOMAXVALUE
 ;
 
     /* Informações */
@@ -374,38 +374,88 @@ SELECT * FROM tbl_produto ORDER BY id_Produto;
 
 -- Cliente 1 --
 
+-- Informações --
+
+-- ID           : 1
+-- Nome         : Cliente_1
+-- Sobrenome    : Sobrenome_1
+-- Gênero       : M
+-- Nascimento   : 04-06-1979
+-- Celular      : (99)99999-9999
+-- Email        : Cliente01@xxxx.com
+
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
-    (sq_id_cliente.nextval,'Cliente_1','Sobrenome_2','M',TO_DATE('1979-06-04','YYYY-MM-DD'),'(99)99999-9999','Cliente01@xxxx.com');
+    (sq_id_cliente.nextval,'Cliente_1','Sobrenome_1','M',TO_DATE('04-06-1979','dd-mm-yyyy'),'(99)99999-9999','Cliente01@xxxx.com');
 
 -- Cliente 2 --
 
+-- Informações --
+
+-- ID           : 2
+-- Nome         : Cliente_2
+-- Sobrenome    : Sobrenome_2
+-- Gênero       : F
+-- Nascimento   : 09-12-1969
+-- Celular      : (99)99999-9990
+-- Email        : Cliente02@xxxx.com
+
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
-    (sq_id_cliente.nextval,'Cliente_2','Sobrenome_2','F',TO_DATE('1969-12-09','YYYY-MM-DD'),'(99)99999-9990','Cliente02@xxxx.com');
+    (sq_id_cliente.nextval,'Cliente_2','Sobrenome_2','F',TO_DATE('09-12-1969','dd-mm-yyyy'),'(99)99999-9990','Cliente02@xxxx.com');
 
 -- Cliente 3 --
 
+-- Informações --
+
+-- ID           : 3
+-- Nome         : Cliente_3
+-- Sobrenome    : Sobrenome_3
+-- Gênero       : M
+-- Nascimento   : 11-11-1989
+-- Celular      : (99)99999-9991
+-- Email        : Cliente03@xxxx.com
+
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
-    (sq_id_cliente.nextval,'Cliente_3','Sobrenome_3','M',TO_DATE('1999-11-11','YYYY-MM-DD'),'(99)99999-9991','Cliente03@xxxx.com');
+    (sq_id_cliente.nextval,'Cliente_3','Sobrenome_3','M',TO_DATE('11-11-1989','dd-mm-yyyy'),'(99)99999-9991','Cliente03@xxxx.com');
 
 -- Cliente 4 --
 
+-- Informações --
+
+-- ID           : 4
+-- Nome         : Cliente_4
+-- Sobrenome    : Sobrenome_4
+-- Gênero       : F
+-- Nascimento   : 01-05-1987
+-- Celular      : (99)99999-9992
+-- Email        : Cliente04@xxxx.com
+
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
-    (sq_id_cliente.nextval,'Cliente_4','Sobrenome_4','F',TO_DATE('1987-05-01','YYYY-MM-DD'),'(99)99999-9992','Cliente04@xxxx.com');
+    (sq_id_cliente.nextval,'Cliente_4','Sobrenome_4','F',TO_DATE('01-05-1987','dd-mm-yyyy'),'(99)99999-9992','Cliente04@xxxx.com');
 
 -- Cliente 5 --
 
+-- Informações --
+
+-- ID           : 5
+-- Nome         : Cliente_5
+-- Sobrenome    : Sobrenome_5
+-- Gênero       : M
+-- Nascimento   : 19-12-1995
+-- Celular      : (99)99999-9981
+-- Email        : Cliente05@xxxx.com
+
 INSERT INTO 
     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
 VALUES 
-    (sq_id_cliente.nextval,'Cliente_5','Sobrenome_5','M',TO_DATE('19-12-1995','dd-mm-yyyy'),'(99)99999-9993','Cliente05@xxxx.com');
+    (sq_id_cliente.nextval,'Cliente_5','Sobrenome_5','M',TO_DATE('19-12-1995','dd-mm-yyyy'),'(99)99999-9981','Cliente05@xxxx.com');
 
 -- Comitando inserts --
 
@@ -1557,26 +1607,8 @@ EXEC SP_PROCEDIMENTOS_PRODUTOS('D',52,NULL,NULL,NULL,NULL);
 
 -- --------------------------------------------- // ----------------------------------------------
 
-
 -- Procedimentos Clientes --
 
-CREATE TABLE tbl_cliente (
-
-    id_cliente          INT                 NOT NULL        ,
-    nome_cliente        VARCHAR2  (50)      NOT NULL        ,
-    sobrenome_cliente   VARCHAR2  (80)      NOT NULL        ,
-    sexo_cliente        CHAR       (1)      NOT NULL        ,
-    nascimento_cliente  DATE                NOT NULL        ,
-    celular_cliente     CHAR      (14)      NOT NULL        ,
-    email_cliente       VARCHAR2  (80)      NOT NULL        ,
-
-    CONSTRAINT      pk_id_cliente         PRIMARY KEY     (id_cliente)                  ,
-    CONSTRAINT      u_celular_cliente     UNIQUE          (celular_cliente)             ,
-    CONSTRAINT      u_email_cliente       UNIQUE          (email_cliente)               ,
-    CONSTRAINT      ck_sexo               CHECK           (sexo_cliente in ('M','F'))   , 
-    CONSTRAINT      ck_celular            CHECK           (REGEXP_LIKE (celular_cliente,'[(][0-9][0-9][)][9][0-9][0-9][0-9][0-9][-][0-9][0-9][0-9][0-9]'))   
-)
-;
 
 CREATE OR REPLACE PROCEDURE SP_PROCEDIMENTOS_CLIENTES
 (                                                       v_procedimento      IN VARCHAR2         , -- Tipo de procedimento >> Insert (I) | Update (U) | Delete (D)
@@ -1585,8 +1617,8 @@ CREATE OR REPLACE PROCEDURE SP_PROCEDIMENTOS_CLIENTES
                                                         v_sobrenomeCliente  IN VARCHAR2         , -- sobrenome do cliente
                                                         v_generoCliente     IN VARCHAR2         , -- genero do cliente
                                                         v_nascimentoCliente IN DATE             , -- nascimento do cliente
-                                                        v_sobrenomeCliente  IN VARCHAR2         , -- sobrenome do cliente
-                                                        v_generoCliente     IN VARCHAR2          -- genero do cliente
+                                                        v_celularCliente    IN VARCHAR2         , -- celular do cliente
+                                                        v_emailCliente      IN VARCHAR2           -- email do cliente
                                                         
 )
 IS
@@ -1603,8 +1635,12 @@ IS
     v_idObrigatorio         EXCEPTION; -- ID obrigatório
     v_idExiste              EXCEPTION; -- Verificar se o ID existe
     v_procedimentoIncorreto EXCEPTION; -- Erro tipo de procedimento
-    v_valoresNegativos      EXCEPTION; -- Valores Negativos
-    v_precoMaiorCusto       EXCEPTION; -- Preço maior que o custo
+
+    v_uniqueCelular         EXCEPTION; -- Valor do celular único
+    v_uniqueEmail           EXCEPTION; -- Valor do email único
+
+    v_checkCelular          EXCEPTION; -- Máscara celular
+    v_checkGenero           EXCEPTION; -- m ou f no genero
 
 BEGIN
 
@@ -1622,21 +1658,21 @@ BEGIN
 
         WHEN v_procedimento IN ('I','U') THEN -- Insert or update
 
-            IF v_nomeProduto IS NULL OR v_precoProduto IS NULL OR v_custoProduto IS NULL THEN
+            IF v_nomeCliente IS NULL OR v_sobrenomeCliente IS NULL OR v_generoCliente IS NULL OR v_nascimentoCliente IS NULL OR v_celularCliente IS NULL OR v_emailCliente IS NULL THEN
 
                 RAISE v_camposObrigatorios; -- ERRO 
 
-            ELSIF v_idProduto IS NULL AND v_procedimento = 'U'  THEN -- Verificar o id do produto
+            ELSIF v_idCliente IS NULL AND v_procedimento = 'U'  THEN -- Verificar o id do produto
 
                 RAISE v_idObrigatorio; -- ERRO 
 
-            ELSIF v_precoProduto <=0 OR v_custoProduto <= 0 OR v_estoqueProduto <0 THEN -- Verificar se o preço ,custo e estoque são maiores que 0
+            ELSIF NOT REGEXP_LIKE(v_celularCliente,'[(][0-9][0-9][)][9][0-9][0-9][0-9][0-9][-][0-9][0-9][0-9][0-9]') AND LEGTH(v_celularCliente) <> 14 THEN -- Máscara do celular
 
-                RAISE v_valoresNegativos; -- ERRO 
+                RAISE v_checkCelular; -- ERRO 
 
-            ELSIF v_precoProduto <= v_custoProduto THEN -- Verificar se o preço é maior que o custo
+            ELSIF v_generoCliente NOT IN ('M','F') THEN -- Verificar o genero
 
-                RAISE v_precoMaiorCusto; -- ERRO 
+                RAISE v_checkGenero; -- ERRO 
 
             END IF;
 
@@ -1644,57 +1680,58 @@ BEGIN
             IF v_procedimento = 'I' THEN -- Insert --
 
                 INSERT INTO 
-                    ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
+                    ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
                 VALUES 
-                    (sq_id_produto.nextval,v_nomeProduto,v_precoProduto,v_custoProduto,NULLIF(v_estoqueProduto,0))
-                    ;
+                    (sq_id_cliente.nextval,v_nomeCliente,v_sobrenomeCliente,v_generoCliente,TO_DATE(v_nascimentoCliente,'dd-mm-yyyy'),v_celularCliente,v_emailCliente);
 
-                v_msgRetorno := 'Produto cadastrado com sucesso' ; -- Mensagem de retorno
+                v_msgRetorno := 'Cliente cadastrado com sucesso' ; -- Mensagem de retorno
 
             ELSIF v_procedimento = 'U' THEN -- Update --
 
-                SELECT COUNT(ID_PRODUTO) INTO v_registros FROM TBL_PRODUTO WHERE ID_PRODUTO = v_idProduto; -- Retornar qnt de id
+                SELECT COUNT(ID_CLIENTE) INTO v_registros FROM TBL_CLIENTE WHERE ID_CLIENTE = v_idCliente; -- Retornar qnt de id
 
-                IF v_registros = 0 THEN -- Verificar se existe o produto
+                IF v_registros = 0 THEN -- Verificar se existe o cliente
                     RAISE v_idExiste; -- erro
                 END IF;
 
                 UPDATE 
-                    ADMIN.TBL_PRODUTO 
+                    ADMIN.TBL_CLIENTE 
                 SET 
-                    NOME_PRODUTO        =   v_nomeProduto   ,
-                    PRECO_PRODUTO       =   v_precoProduto  ,
-                    CUSTO_PRODUTO       =   v_custoProduto  ,
-                    ESTOQUE_PRODUTO     =   NULLIF(v_estoqueProduto,0)
+                    NOME_CLIENTE            =   v_nomeCliente   ,
+                    SOBRENOME_CLIENTE       =   v_sobrenomeCliente  ,
+                    SEXO_CLIENTE            =   v_generoCliente  ,
+                    NASCIMENTO_CLIENTE      =   TO_DATE(v_nascimentoCliente,'dd-mm-yyyy'),
+                    CELULAR_CLIENTE         =   v_celularCliente,
+                    EMAIL_CLIENTE           =   v_emailCliente
                 WHERE
-                    ID_PRODUTO = v_idProduto
+                    ID_CLIENTE = v_idCliente
                     ;
 
-                v_msgRetorno := 'Produto alterado com sucesso' ; -- Mensagem de retorno
+                v_msgRetorno := 'Cliente alterado com sucesso' ; -- Mensagem de retorno
 
             END IF;
 
         WHEN v_procedimento = 'D' THEN -- delete
 
-            IF v_idProduto IS NULL  THEN -- Verificar o id do produto
+            IF v_idCliente IS NULL  THEN -- Verificar o id do produto
 
                 RAISE v_idObrigatorio; -- ERRO 
 
             ELSE
 
-                SELECT COUNT(ID_PRODUTO) INTO v_registros FROM TBL_PRODUTO WHERE ID_PRODUTO = v_idProduto; -- Retornar qnt de id
+                SELECT COUNT(ID_CLIENTE) INTO v_registros FROM TBL_CLIENTE WHERE ID_CLIENTE = v_idCliente; -- Retornar qnt de id
 
-                IF v_registros = 0 THEN -- Verificar se existe o produto
+                IF v_registros = 0 THEN -- Verificar se existe o cliente
                     RAISE v_idExiste; -- erro
                 END IF;
 
                  DELETE FROM 
-                    ADMIN.TBL_PRODUTO 
+                    ADMIN.TBL_CLIENTE 
                 WHERE
-                    ID_PRODUTO = v_idProduto
+                    ID_CLIENTE = v_idCliente
                     ;
 
-                v_msgRetorno := 'Produto excluído com sucesso' ; -- Mensagem de retorno
+                v_msgRetorno := 'Cliente excluído com sucesso' ; -- Mensagem de retorno
                 
 
             END IF;
@@ -1723,23 +1760,23 @@ BEGIN
         SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
     WHEN v_camposObrigatorios THEN -- Campos obrigatórios
-        v_msgRetorno := 'Campos Obrigatórios: Nome | Preço | Custo ' ; -- Mensagem de retorno
+        v_msgRetorno := 'Campos Obrigatórios: Nome | Sobrenome | Gênero | Nascimento | Email | Celular ' ; -- Mensagem de retorno
        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
     WHEN v_idObrigatorio THEN -- id nulo
-        v_msgRetorno := 'É necessário informar o ID do produto para realizar alterações e exclusões' ; -- Mensagem de retorno
+        v_msgRetorno := 'É necessário informar o ID do cliente para realizar alterações e exclusões' ; -- Mensagem de retorno
         SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
-    WHEN v_valoresNegativos THEN -- preço ou custo ou estoque menores ou igual a 0
-        v_msgRetorno := 'O preço e custo devem ser maiores que 0 e o estoque maior ou igual a 0' ; -- Mensagem de retorno
+    WHEN v_checkCelular THEN -- Máscara do celular
+        v_msgRetorno := 'Verifique se o celular está nesse formato (xx)9xxxx-xxxx' ; -- Mensagem de retorno
         SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
-    WHEN v_precoMaiorCusto THEN -- preço maior custo
-        v_msgRetorno := 'O preço deve ser maior que o custo' ; -- Mensagem de retorno
+    WHEN v_checkGenero THEN -- preço maior custo
+        v_msgRetorno := 'O gênero do cliente deverá ser M ou F' ; -- Mensagem de retorno
         SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
     WHEN v_idExiste THEN -- Verificar se o id existe
-        v_msgRetorno := 'Produto não cadastrado' ; -- Mensagem de retorno
+        v_msgRetorno := 'Cliente não cadastrado' ; -- Mensagem de retorno
         SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
     WHEN OTHERS THEN -- Outro erro
@@ -1889,7 +1926,14 @@ WHERE ROWNUM <= 10
 
 -- -----------------------------------------------
 
+-- --------------- INDEX ------------------------
 
+-- Aumentar significativamente a performance em consultas ao banco de dados
+-- Pode diminuir a velocidade de transações como inserts e updates. 
+
+-- Index para a coluna nome na tabela clientes
+
+CREATE INDEX IND_NOME_CLIENTE ON TBL_CLIENTE(NOME_CLIENTE);
 
 
 
