@@ -2651,13 +2651,103 @@ ORDER BY
 
 -- Mês com maior faturamento --
 
+SELECT * FROM (
 
+SELECT
+    TO_CHAR(P1.DATA_PEDIDO,'YYYY')                                             AS      "Ano",
+    TO_CHAR(P1.DATA_PEDIDO,'MONTH')                                             AS      "Mês",
+    SUM((C1.PRECO_PRODUTO*C1.QNT_PRODUTO)-(C1.CUSTO_PRODUTO*C1.QNT_PRODUTO))    AS "Faturamento"
+FROM 
+    TBL_PEDIDO P1
+INNER JOIN
+    TBL_CARRINHO C1
+ON
+    P1.ID_PEDIDO = C1.ID_PEDIDO
+WHERE
+    P1.SITUACAO_PAG IS NOT NULL
+GROUP BY
+   TO_CHAR(P1.DATA_PEDIDO,'YYYY'), TO_CHAR(P1.DATA_PEDIDO,'MONTH')
+ORDER BY
+    "Faturamento" DESC
+)
+
+WHERE ROWNUM = 1
+
+;
 
 -- Mês com menor faturamento --
 
 
+SELECT * FROM (
+
+SELECT
+    TO_CHAR(P1.DATA_PEDIDO,'YYYY')                                             AS      "Ano",
+    TO_CHAR(P1.DATA_PEDIDO,'MONTH')                                             AS      "Mês",
+    SUM((C1.PRECO_PRODUTO*C1.QNT_PRODUTO)-(C1.CUSTO_PRODUTO*C1.QNT_PRODUTO))    AS "Faturamento"
+FROM 
+    TBL_PEDIDO P1
+INNER JOIN
+    TBL_CARRINHO C1
+ON
+    P1.ID_PEDIDO = C1.ID_PEDIDO
+WHERE
+    P1.SITUACAO_PAG IS NOT NULL
+GROUP BY
+   TO_CHAR(P1.DATA_PEDIDO,'YYYY'), TO_CHAR(P1.DATA_PEDIDO,'MONTH')
+ORDER BY
+    "Faturamento" ASC
+)
+
+WHERE ROWNUM = 1
+
+;
+
+-- Mês com maior custo --
+
+SELECT * FROM (
+
+SELECT
+    TO_CHAR(P1.DATA_PEDIDO,'YYYY')                                              AS      "Ano",
+    TO_CHAR(P1.DATA_PEDIDO,'MONTH')                                             AS      "Mês",
+    SUM(C1.CUSTO_PRODUTO*C1.QNT_PRODUTO)                                        AS "Custo"
+FROM 
+    TBL_PEDIDO P1
+INNER JOIN
+    TBL_CARRINHO C1
+ON
+    P1.ID_PEDIDO = C1.ID_PEDIDO
+GROUP BY
+   TO_CHAR(P1.DATA_PEDIDO,'YYYY'), TO_CHAR(P1.DATA_PEDIDO,'MONTH')
+ORDER BY
+    "Custo" DESC
+)
+
+WHERE ROWNUM = 1
+
+;
+
 
 -- Mês com maior prejuízo --
+
+SELECT
+    TO_CHAR(P1.DATA_PEDIDO,'YYYY')                                              AS "Ano",
+    TO_CHAR(P1.DATA_PEDIDO,'MONTH')                                             AS "Mês",
+    SUM((C1.CUSTO_PRODUTO*C1.QNT_PRODUTO))                                      AS "Custo",
+    SUM((C1.PRECO_PRODUTO*C1.QNT_PRODUTO))                                      AS "Lucro",
+    SUM((C1.PRECO_PRODUTO*C1.QNT_PRODUTO)-(C1.CUSTO_PRODUTO*C1.QNT_PRODUTO))    AS "Faturamento"
+FROM 
+    TBL_PEDIDO P1
+INNER JOIN
+    TBL_CARRINHO C1
+ON
+    P1.ID_PEDIDO = C1.ID_PEDIDO
+GROUP BY
+   TO_CHAR(P1.DATA_PEDIDO,'YYYY'), TO_CHAR(P1.DATA_PEDIDO,'MONTH')
+HAVING
+    SUM((C1.PRECO_PRODUTO*C1.QNT_PRODUTO)-(C1.CUSTO_PRODUTO*C1.QNT_PRODUTO)) < 0
+ORDER BY
+    "Faturamento" ASC
+
 
 
 
@@ -2677,7 +2767,7 @@ ORDER BY
 
 -- -------------------------------------------------------------------------------------------------------
 
--- Aumentar significativamente a performance em consultas ao banco de dados
+-- Aumentar significativamente a performance em consultas ao banco de dados.
 -- Pode diminuir a velocidade de transações como inserts e updates. 
 
 -- Index para a coluna nome na tabela clientes
