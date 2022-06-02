@@ -1112,7 +1112,6 @@ CREATE OR REPLACE PROCEDURE SP_ZERAR_TABELA
 
 IS
     v_valor_seq         NUMBER          ;
-    cursor_             SYS_REFCURSOR   ;
     
 BEGIN
     EXECUTE IMMEDIATE
@@ -1156,7 +1155,6 @@ IS
     v_precoProduto          NUMBER      (9,2)   ;   -- preço do produto
     v_custoProduto          NUMBER      (9,2)   ;   -- custo do produto
     v_estoque               INT                 ;   -- estoque do produto
-    cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
     v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
     v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
 
@@ -1232,7 +1230,6 @@ IS
     v_celularCliente        CHAR        (14)    ;   -- celular do cliente
     v_emailCliente          VARCHAR2    (80)    ;   -- email do cliente
 
-    cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
     v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
     v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
 
@@ -1324,7 +1321,6 @@ IS
     v_precoProduto          DECIMAL     (9,2)   ;   -- preço do produto
     v_custoProduto          DECIMAL     (9,2)   ;   -- custo do produto
 
-    cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
     v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
     v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
 
@@ -1438,7 +1434,6 @@ CREATE OR REPLACE PROCEDURE SP_PROCEDIMENTOS_PRODUTOS
 IS
     v_registros              INT                 ;   -- qnt de registros retornados
 
-    cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
     v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
     v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
     v_msgRetorno            VARCHAR2    (100)   ;   -- Mensagem de retorno
@@ -1522,28 +1517,19 @@ BEGIN
 
         WHEN v_procedimento = 'D' THEN -- delete
 
-            IF v_idProduto IS NULL  THEN -- Verificar o id do produto
+            SELECT COUNT(ID_PRODUTO) INTO v_registros FROM TBL_PRODUTO WHERE ID_PRODUTO = v_idProduto; -- Retornar qnt de id
 
-                RAISE v_idObrigatorio; -- ERRO 
-
-            ELSE
-
-                SELECT COUNT(ID_PRODUTO) INTO v_registros FROM TBL_PRODUTO WHERE ID_PRODUTO = v_idProduto; -- Retornar qnt de id
-
-                IF v_registros = 0 THEN -- Verificar se existe o produto
-                    RAISE v_idExiste; -- erro
-                END IF;
-
-                 DELETE FROM 
-                    ADMIN.TBL_PRODUTO 
-                WHERE
-                    ID_PRODUTO = v_idProduto
-                    ;
-
-                v_msgRetorno := 'Produto excluído com sucesso' ; -- Mensagem de retorno
-                
-
+            IF v_registros = 0 OR v_idProduto IS NULL THEN -- Verificar se existe o produto
+                RAISE v_idExiste; -- erro
             END IF;
+
+                DELETE FROM 
+                ADMIN.TBL_PRODUTO 
+            WHERE
+                ID_PRODUTO = v_idProduto
+                ;
+
+            v_msgRetorno := 'Produto excluído com sucesso' ; -- Mensagem de retorno
 
     
     END CASE;
@@ -1637,7 +1623,6 @@ CREATE OR REPLACE PROCEDURE SP_PROCEDIMENTOS_CLIENTES
 IS
     v_registros              INT                 ;   -- qnt de registros retornados
 
-    cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
     v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
     v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
     v_msgRetorno            VARCHAR2    (100)   ;   -- Mensagem de retorno
@@ -1774,28 +1759,20 @@ BEGIN
 
         WHEN v_procedimento = 'D' THEN -- delete
 
-            IF v_idCliente IS NULL  THEN -- Verificar o id do produto
 
-                RAISE v_idObrigatorio; -- ERRO 
+            SELECT COUNT(ID_CLIENTE) INTO v_registros FROM TBL_CLIENTE WHERE ID_CLIENTE = v_idCliente; -- Retornar qnt de id
 
-            ELSE
-
-                SELECT COUNT(ID_CLIENTE) INTO v_registros FROM TBL_CLIENTE WHERE ID_CLIENTE = v_idCliente; -- Retornar qnt de id
-
-                IF v_registros = 0 THEN -- Verificar se existe o cliente
-                    RAISE v_idExiste; -- erro
-                END IF;
-
-                 DELETE FROM 
-                    ADMIN.TBL_CLIENTE 
-                WHERE
-                    ID_CLIENTE = v_idCliente
-                    ;
-
-                v_msgRetorno := 'Cliente excluído com sucesso' ; -- Mensagem de retorno
-                
-
+            IF v_registros = 0 OR v_idCliente IS NULL THEN -- Verificar se existe o cliente
+                RAISE v_idExiste; -- erro
             END IF;
+
+                DELETE FROM 
+                ADMIN.TBL_CLIENTE 
+            WHERE
+                ID_CLIENTE = v_idCliente
+                ;
+
+            v_msgRetorno := 'Cliente excluído com sucesso' ; -- Mensagem de retorno
 
     
     END CASE;
@@ -1891,6 +1868,208 @@ EXEC SP_PROCEDIMENTOS_CLIENTES('D',52,NULL,NULL,NULL,NULL,NULL,NULL);
 -- Procedimentos Pedidos --
 
 
+CREATE OR REPLACE PROCEDURE SP_PROCEDIMENTOS_PEDIDOS
+(                                                       v_procedimento      IN VARCHAR2         , -- Tipo de procedimento >> Insert (I) | Update (U) | Delete (D)
+                                                        v_idPedido          IN NUMBER           , -- id do pedido
+                                                        v_idCliente         IN NUMBER           , -- id do cliente
+                                                        v_situacaoPag       IN VARCHAR2         , -- situação do pagamento
+                                                        v_dataPedido        IN VARCHAR2          -- data do pedido
+                                                        
+)
+IS
+    v_registros              INT                 ;   -- qnt de registros retornados
+
+    v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
+    v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
+    v_msgRetorno            VARCHAR2    (100)   ;   -- Mensagem de retorno
+
+    -- EXCEPTION --
+
+    v_camposObrigatorios    EXCEPTION; -- Campos obrigatórios
+    v_idObrigatorio         EXCEPTION; -- ID obrigatório
+    v_idExiste              EXCEPTION; -- Verificar se o ID existe
+    v_procedimentoIncorreto EXCEPTION; -- Erro tipo de procedimento
+
+    v_verificarCliente      EXCEPTION; -- Verificar se o cliente existe
+
+    v_checkPagamento        EXCEPTION; -- 'P' ou NULL
+
+    v_validacaoData         EXCEPTION; -- validação de data (xx-xx-xxxx)
+
+BEGIN
+
+    -- Verificações básicas --
+
+    IF v_procedimento NOT IN ('I','U','D') OR v_procedimento IS NULL THEN -- Verificar se o procedimento está correto
+
+        RAISE v_procedimentoIncorreto; -- ERRO 
+
+    END IF;
+
+    -- DML --
+
+    CASE 
+
+        WHEN v_procedimento IN ('I','U') THEN -- Insert or update
+
+            IF v_idCliente IS NULL OR v_dataPedido IS NULL THEN
+
+                RAISE v_camposObrigatorios; -- ERRO 
+
+            ELSIF v_idPedido IS NULL AND v_procedimento = 'U'  THEN -- Verificar o id do produto
+
+                RAISE v_idObrigatorio; -- ERRO 
+
+            ELSIF v_situacaoPag <> 'P' AND v_situacaoPag IS NOT NULL THEN -- Verificar o genero
+
+                RAISE v_checkPagamento; -- ERRO 
+
+            ELSIF LENGTH(v_dataPedido) <> 10 THEN -- Validação de data part1
+
+                RAISE v_validacaoData;
+
+            ELSE
+
+                SELECT test_date(v_dataPedido) INTO v_msgRetorno FROM DUAL; -- Validação de data part2
+
+                IF v_msgRetorno = 'Invalid' THEN
+
+                    RAISE v_validacaoData;
+
+                END IF;
+
+                SELECT COUNT(ID_CLIENTE) INTO v_registros FROM TBL_CLIENTE WHERE ID_CLIENTE = v_idCliente; -- Verificar se o cliente existe
+
+                IF v_registros = 0 THEN
+                    
+                    RAISE v_verificarCliente;
+
+                END IF;
+
+            END IF;
+
+        
+            IF v_procedimento = 'I' THEN -- Insert --
+
+                INSERT INTO 
+                    ADMIN.TBL_PEDIDO (ID_PEDIDO,ID_CLIENTE,SITUACAO_PAG,DATA_PEDIDO) 
+                VALUES 
+                    (seq_id_pedido.nextval,v_idCliente,v_situacaoPag,TO_DATE(v_dataPedido,'dd-mm-yyyy'));
+
+                v_msgRetorno := 'Pedido cadastrado com sucesso' ; -- Mensagem de retorno
+
+            ELSIF v_procedimento = 'U' THEN -- Update --
+
+                SELECT COUNT(ID_PEDIDO) INTO v_registros FROM TBL_PEDIDO WHERE ID_PEDIDO = v_idPedido; -- Retornar qnt de id
+
+                IF v_registros = 0 OR v_idPedido IS NULL THEN -- Verificar se existe o pedido
+                    RAISE v_idExiste; -- erro
+                END IF;
+
+                UPDATE 
+                    ADMIN.TBL_PEDIDO 
+                SET 
+                    ID_CLIENTE         =   v_idCliente                              ,
+                    SITUACAO_PAG       =   v_situacaoPag                            ,
+                    DATA_PEDIDO        =   TO_DATE(v_dataPedido,'dd-mm-yyyy')  
+                WHERE
+                    ID_PEDIDO = v_idPedido
+                    ;
+
+                v_msgRetorno := 'Pedido alterado com sucesso' ; -- Mensagem de retorno
+
+            END IF;
+
+        WHEN v_procedimento = 'D' THEN -- delete
+
+            SELECT COUNT(ID_PEDIDO) INTO v_registros FROM TBL_PEDIDO WHERE ID_PEDIDO = v_idPedido; -- Retornar qnt de id
+
+            IF v_registros = 0 OR v_idPedido IS NULL THEN -- Verificar se existe o pedido
+                RAISE v_idExiste; -- erro
+            END IF;
+
+                DELETE FROM 
+                ADMIN.TBL_PEDIDO 
+            WHERE
+                ID_PEDIDO = v_idPedido
+                ;
+
+            v_msgRetorno := 'Pedido excluído com sucesso' ; -- Mensagem de retorno
+            
+    END CASE;
+
+    -- Commit --
+
+    IF SQLCODE = 0 THEN -- Verificar se deu erro --
+
+        COMMIT; -- Comitar --
+
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL');
+        SP_RETORNAR_TABELA('SELECT * FROM TBL_PEDIDO ORDER BY ID_PEDIDO');
+
+    END IF;
+
+
+    -- Tratamento de erro --
+
+    EXCEPTION
+
+    WHEN v_procedimentoIncorreto THEN -- Erro no tipo de procedimento
+        v_msgRetorno := 'Procedimento válido: Insert (I) | Update (U) | Delete (D)' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_camposObrigatorios THEN -- Campos obrigatórios
+        v_msgRetorno := 'Campos Obrigatórios: id do Cliente | Data do pedido ' ; -- Mensagem de retorno
+       SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_idObrigatorio THEN -- id nulo
+        v_msgRetorno := 'É necessário informar o ID do pedido para realizar alterações e exclusões' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_checkPagamento THEN -- Verificar pagamento
+        v_msgRetorno := 'O pagamento deve ser P ou Null' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_idExiste THEN -- Verificar se o id pedido existe
+        v_msgRetorno := 'Pedido não cadastrado' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_verificarCliente THEN -- Verificar se o id cliente
+        v_msgRetorno := 'Cliente não cadastrado' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_validacaoData THEN -- Validação de data
+        v_msgRetorno := 'O formato de data deve ser dd-mm-yyyy' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN OTHERS THEN -- Outro erro
+
+        v_SQLERRM := SQLERRM ;
+        v_SQLCODE := SQLCODE ;
+
+        v_msgRetorno := 'Nª do erro: ' || v_SQLCODE || ' | Mensagem: ' || v_SQLERRM ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+        ROLLBACK; -- Rollback
+
+    
+
+END;
+/
+
+
+-- Executar comando --
+
+-- Insert --
+
+EXEC SP_PROCEDIMENTOS_PEDIDOS('I',NULL,1,'P','10-10-2022');
+
+-- Update --
+
+EXEC SP_PROCEDIMENTOS_PEDIDOS('U',1,1,'P','10-10-2022');
+
+-- Delete --
+
+EXEC SP_PROCEDIMENTOS_PEDIDOS('D',1,NULL,NULL,NULL);
 
 
 
