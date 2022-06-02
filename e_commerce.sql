@@ -1258,8 +1258,8 @@ IS
     
     v_idProduto             INT                 ;   -- id do produto
     v_qntProduto            INT                 ;   -- quantidade do produto
-    v_precoProduto          DECIMAL(9,2)        ;   -- preço do produto
-    v_custoProduto          DECIMAL(9,2)        ;   -- custo do produto
+    v_precoProduto          DECIMAL     (9,2)   ;   -- preço do produto
+    v_custoProduto          DECIMAL     (9,2)   ;   -- custo do produto
 
     cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
     v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
@@ -1560,6 +1560,216 @@ EXEC SP_PROCEDIMENTOS_PRODUTOS('D',52,NULL,NULL,NULL,NULL);
 
 -- Procedimentos Clientes --
 
+CREATE TABLE tbl_cliente (
+
+    id_cliente          INT                 NOT NULL        ,
+    nome_cliente        VARCHAR2  (50)      NOT NULL        ,
+    sobrenome_cliente   VARCHAR2  (80)      NOT NULL        ,
+    sexo_cliente        CHAR       (1)      NOT NULL        ,
+    nascimento_cliente  DATE                NOT NULL        ,
+    celular_cliente     CHAR      (14)      NOT NULL        ,
+    email_cliente       VARCHAR2  (80)      NOT NULL        ,
+
+    CONSTRAINT      pk_id_cliente         PRIMARY KEY     (id_cliente)                  ,
+    CONSTRAINT      u_celular_cliente     UNIQUE          (celular_cliente)             ,
+    CONSTRAINT      u_email_cliente       UNIQUE          (email_cliente)               ,
+    CONSTRAINT      ck_sexo               CHECK           (sexo_cliente in ('M','F'))   , 
+    CONSTRAINT      ck_celular            CHECK           (REGEXP_LIKE (celular_cliente,'[(][0-9][0-9][)][9][0-9][0-9][0-9][0-9][-][0-9][0-9][0-9][0-9]'))   
+)
+;
+
+CREATE OR REPLACE PROCEDURE SP_PROCEDIMENTOS_CLIENTES
+(                                                       v_procedimento      IN VARCHAR2         , -- Tipo de procedimento >> Insert (I) | Update (U) | Delete (D)
+                                                        v_idCliente         IN NUMBER           , -- id do cliente
+                                                        v_nomeCliente       IN VARCHAR2         , -- nome do cliente
+                                                        v_sobrenomeCliente  IN VARCHAR2         , -- sobrenome do cliente
+                                                        v_generoCliente     IN VARCHAR2         , -- genero do cliente
+                                                        v_nascimentoCliente IN DATE             , -- nascimento do cliente
+                                                        v_sobrenomeCliente  IN VARCHAR2         , -- sobrenome do cliente
+                                                        v_generoCliente     IN VARCHAR2          -- genero do cliente
+                                                        
+)
+IS
+    v_registros              INT                 ;   -- qnt de registros retornados
+
+    cursor_                 SYS_REFCURSOR       ;   -- cursor de retorno
+    v_SQLERRM               VARCHAR2    (100)   ;   -- mensagem de erro
+    v_SQLCODE               VARCHAR2    (30)    ;   -- código de erro
+    v_msgRetorno            VARCHAR2    (100)   ;   -- Mensagem de retorno
+
+    -- EXCEPTION --
+
+    v_camposObrigatorios    EXCEPTION; -- Campos obrigatórios
+    v_idObrigatorio         EXCEPTION; -- ID obrigatório
+    v_idExiste              EXCEPTION; -- Verificar se o ID existe
+    v_procedimentoIncorreto EXCEPTION; -- Erro tipo de procedimento
+    v_valoresNegativos      EXCEPTION; -- Valores Negativos
+    v_precoMaiorCusto       EXCEPTION; -- Preço maior que o custo
+
+BEGIN
+
+    -- Verificações básicas --
+
+    IF v_procedimento NOT IN ('I','U','D') OR v_procedimento IS NULL THEN -- Verificar se o procedimento está correto
+
+        RAISE v_procedimentoIncorreto; -- ERRO 
+
+    END IF;
+
+    -- DML --
+
+    CASE 
+
+        WHEN v_procedimento IN ('I','U') THEN -- Insert or update
+
+            IF v_nomeProduto IS NULL OR v_precoProduto IS NULL OR v_custoProduto IS NULL THEN
+
+                RAISE v_camposObrigatorios; -- ERRO 
+
+            ELSIF v_idProduto IS NULL AND v_procedimento = 'U'  THEN -- Verificar o id do produto
+
+                RAISE v_idObrigatorio; -- ERRO 
+
+            ELSIF v_precoProduto <=0 OR v_custoProduto <= 0 OR v_estoqueProduto <0 THEN -- Verificar se o preço ,custo e estoque são maiores que 0
+
+                RAISE v_valoresNegativos; -- ERRO 
+
+            ELSIF v_precoProduto <= v_custoProduto THEN -- Verificar se o preço é maior que o custo
+
+                RAISE v_precoMaiorCusto; -- ERRO 
+
+            END IF;
+
+        
+            IF v_procedimento = 'I' THEN -- Insert --
+
+                INSERT INTO 
+                    ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
+                VALUES 
+                    (sq_id_produto.nextval,v_nomeProduto,v_precoProduto,v_custoProduto,NULLIF(v_estoqueProduto,0))
+                    ;
+
+                v_msgRetorno := 'Produto cadastrado com sucesso' ; -- Mensagem de retorno
+
+            ELSIF v_procedimento = 'U' THEN -- Update --
+
+                SELECT COUNT(ID_PRODUTO) INTO v_registros FROM TBL_PRODUTO WHERE ID_PRODUTO = v_idProduto; -- Retornar qnt de id
+
+                IF v_registros = 0 THEN -- Verificar se existe o produto
+                    RAISE v_idExiste; -- erro
+                END IF;
+
+                UPDATE 
+                    ADMIN.TBL_PRODUTO 
+                SET 
+                    NOME_PRODUTO        =   v_nomeProduto   ,
+                    PRECO_PRODUTO       =   v_precoProduto  ,
+                    CUSTO_PRODUTO       =   v_custoProduto  ,
+                    ESTOQUE_PRODUTO     =   NULLIF(v_estoqueProduto,0)
+                WHERE
+                    ID_PRODUTO = v_idProduto
+                    ;
+
+                v_msgRetorno := 'Produto alterado com sucesso' ; -- Mensagem de retorno
+
+            END IF;
+
+        WHEN v_procedimento = 'D' THEN -- delete
+
+            IF v_idProduto IS NULL  THEN -- Verificar o id do produto
+
+                RAISE v_idObrigatorio; -- ERRO 
+
+            ELSE
+
+                SELECT COUNT(ID_PRODUTO) INTO v_registros FROM TBL_PRODUTO WHERE ID_PRODUTO = v_idProduto; -- Retornar qnt de id
+
+                IF v_registros = 0 THEN -- Verificar se existe o produto
+                    RAISE v_idExiste; -- erro
+                END IF;
+
+                 DELETE FROM 
+                    ADMIN.TBL_PRODUTO 
+                WHERE
+                    ID_PRODUTO = v_idProduto
+                    ;
+
+                v_msgRetorno := 'Produto excluído com sucesso' ; -- Mensagem de retorno
+                
+
+            END IF;
+
+    
+    END CASE;
+
+    -- Commit --
+
+    IF SQLCODE = 0 THEN -- Verificar se deu erro --
+
+        COMMIT; -- Comitar --
+
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL');
+        SP_RETORNAR_TABELA('SELECT * FROM TBL_PRODUTO ORDER BY ID_PRODUTO');
+
+    END IF;
+
+
+    -- Tratamento de erro --
+
+    EXCEPTION
+
+    WHEN v_procedimentoIncorreto THEN -- Erro no tipo de procedimento
+        v_msgRetorno := 'Procedimento válido: Insert (I) | Update (U) | Delete (D)' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_camposObrigatorios THEN -- Campos obrigatórios
+        v_msgRetorno := 'Campos Obrigatórios: Nome | Preço | Custo ' ; -- Mensagem de retorno
+       SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_idObrigatorio THEN -- id nulo
+        v_msgRetorno := 'É necessário informar o ID do produto para realizar alterações e exclusões' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_valoresNegativos THEN -- preço ou custo ou estoque menores ou igual a 0
+        v_msgRetorno := 'O preço e custo devem ser maiores que 0 e o estoque maior ou igual a 0' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_precoMaiorCusto THEN -- preço maior custo
+        v_msgRetorno := 'O preço deve ser maior que o custo' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_idExiste THEN -- Verificar se o id existe
+        v_msgRetorno := 'Produto não cadastrado' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN OTHERS THEN -- Outro erro
+
+        v_SQLERRM := SQLERRM ;
+        v_SQLCODE := SQLCODE ;
+
+        v_msgRetorno := 'Nª do erro: ' || v_SQLCODE || ' | Mensagem: ' || v_SQLERRM ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+        ROLLBACK; -- Rollback
+
+    
+
+END;
+/
+
+
+-- Executar comando --
+
+-- Insert --
+
+EXEC SP_PROCEDIMENTOS_PRODUTOS('I',NULL,'Produto ZYZZ',170.99,150.99,1);
+
+-- Update --
+
+EXEC SP_PROCEDIMENTOS_PRODUTOS('U',52,'Produto Zysnei',170.99,150.99,1);
+
+-- Delete --
+
+EXEC SP_PROCEDIMENTOS_PRODUTOS('D',52,NULL,NULL,NULL,NULL);
 
 
 
