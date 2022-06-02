@@ -934,6 +934,19 @@ END;
 
 SELECT FUNC_RETORNAR_ESTOQUE(1) "Estoque" FROM DUAL;
 
+-- --------------- // -----------------------------------
+
+-- Válidação de data
+
+create function test_date(d varchar2) return varchar2
+is
+  v_date date;
+begin
+  select to_date(d,'dd-mm-yyyy') into v_date from dual;
+  return 'Valid';
+  exception when others then return 'Invalid';
+end;
+
 
 -- --------------- TRIGGER ------------------------
 
@@ -1616,7 +1629,7 @@ CREATE OR REPLACE PROCEDURE SP_PROCEDIMENTOS_CLIENTES
                                                         v_nomeCliente       IN VARCHAR2         , -- nome do cliente
                                                         v_sobrenomeCliente  IN VARCHAR2         , -- sobrenome do cliente
                                                         v_generoCliente     IN VARCHAR2         , -- genero do cliente
-                                                        v_nascimentoCliente IN DATE             , -- nascimento do cliente
+                                                        v_nascimentoCliente IN VARCHAR2         , -- nascimento do cliente
                                                         v_celularCliente    IN VARCHAR2         , -- celular do cliente
                                                         v_emailCliente      IN VARCHAR2           -- email do cliente
                                                         
@@ -1642,6 +1655,8 @@ IS
     v_checkCelular          EXCEPTION; -- Máscara celular
     v_checkGenero           EXCEPTION; -- m ou f no genero
 
+    v_validacaoData         EXCEPTION; -- validação de data (xx-xx-xxxx)
+
 BEGIN
 
     -- Verificações básicas --
@@ -1666,7 +1681,7 @@ BEGIN
 
                 RAISE v_idObrigatorio; -- ERRO 
 
-            ELSIF NOT REGEXP_LIKE(v_celularCliente,'[(][0-9][0-9][)][9][0-9][0-9][0-9][0-9][-][0-9][0-9][0-9][0-9]') AND LEGTH(v_celularCliente) <> 14 THEN -- Máscara do celular
+            ELSIF NOT REGEXP_LIKE(v_celularCliente,'[(][0-9][0-9][)][9][0-9][0-9][0-9][0-9][-][0-9][0-9][0-9][0-9]') OR LENGTH(v_celularCliente) <> 14 THEN -- Máscara do celular
 
                 RAISE v_checkCelular; -- ERRO 
 
@@ -1674,10 +1689,40 @@ BEGIN
 
                 RAISE v_checkGenero; -- ERRO 
 
+            ELSIF LENGTH(v_nascimentoCliente) <> 10 THEN -- Validação de data part1
+
+                RAISE v_validacaoData;
+
+            ELSE
+
+                SELECT test_date(v_nascimentoCliente) INTO v_msgRetorno FROM DUAL; -- Validação de data part2
+
+                IF v_msgRetorno = 'Invalid' THEN
+
+                    RAISE v_validacaoData;
+
+                END IF;
+
             END IF;
 
         
             IF v_procedimento = 'I' THEN -- Insert --
+
+                SELECT COUNT(ID_CLIENTE) INTO v_registros FROM TBL_CLIENTE WHERE CELULAR_CLIENTE = v_celularCliente; -- Verificar se o celular existe
+
+                IF v_registros > 0 THEN
+                    
+                    RAISE v_uniqueCelular;
+
+                END IF;
+
+                SELECT COUNT(ID_CLIENTE) INTO v_registros FROM TBL_CLIENTE WHERE EMAIL_CLIENTE = v_emailCliente; -- Verificar se o email existe
+
+                IF v_registros > 0 THEN
+                    
+                    RAISE v_uniqueEmail;
+
+                END IF;
 
                 INSERT INTO 
                     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
@@ -1692,6 +1737,22 @@ BEGIN
 
                 IF v_registros = 0 THEN -- Verificar se existe o cliente
                     RAISE v_idExiste; -- erro
+                END IF;
+
+                SELECT COUNT(ID_CLIENTE) INTO v_registros FROM TBL_CLIENTE WHERE CELULAR_CLIENTE = v_celularCliente AND ID_CLIENTE <> v_idCliente; -- Verificar se o celular existe
+
+                IF v_registros > 0 THEN
+                    
+                    RAISE v_uniqueCelular;
+
+                END IF;
+
+                SELECT COUNT(ID_CLIENTE) INTO v_registros FROM TBL_CLIENTE WHERE EMAIL_CLIENTE = v_emailCliente AND ID_CLIENTE <> v_idCliente; -- Verificar se o email existe
+
+                IF v_registros > 0 THEN
+                    
+                    RAISE v_uniqueEmail;
+
                 END IF;
 
                 UPDATE 
@@ -1746,7 +1807,7 @@ BEGIN
         COMMIT; -- Comitar --
 
         SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL');
-        SP_RETORNAR_TABELA('SELECT * FROM TBL_PRODUTO ORDER BY ID_PRODUTO');
+        SP_RETORNAR_TABELA('SELECT * FROM TBL_CLIENTE ORDER BY ID_CLIENTE');
 
     END IF;
 
@@ -1779,6 +1840,18 @@ BEGIN
         v_msgRetorno := 'Cliente não cadastrado' ; -- Mensagem de retorno
         SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
+    WHEN v_uniqueCelular THEN -- preço maior custo
+        v_msgRetorno := 'Celular já cadastrado' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_uniqueEmail THEN -- Verificar se o id existe
+        v_msgRetorno := 'Email já cadastrado' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_validacaoData THEN -- Validação de data
+        v_msgRetorno := 'O formato de data deve ser dd-mm-yyyy' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
     WHEN OTHERS THEN -- Outro erro
 
         v_SQLERRM := SQLERRM ;
@@ -1798,16 +1871,15 @@ END;
 
 -- Insert --
 
-EXEC SP_PROCEDIMENTOS_PRODUTOS('I',NULL,'Produto ZYZZ',170.99,150.99,1);
+EXEC SP_PROCEDIMENTOS_CLIENTES('I',NULL,'Cliente_X','Sobrenome_X','M','10-10-1999','(99)98765-0989','Cliente_XXx@xxxx.com');
 
 -- Update --
 
-EXEC SP_PROCEDIMENTOS_PRODUTOS('U',52,'Produto Zysnei',170.99,150.99,1);
+EXEC SP_PROCEDIMENTOS_CLIENTES('U',3,'Cliente_X','Sobrenome_X','M','10-10-1998','(99)98765-0912','Cliente_XXa@xxxx.com');
 
 -- Delete --
 
-EXEC SP_PROCEDIMENTOS_PRODUTOS('D',52,NULL,NULL,NULL,NULL);
-
+EXEC SP_PROCEDIMENTOS_CLIENTES('D',52,NULL,NULL,NULL,NULL,NULL,NULL);
 
 
 
