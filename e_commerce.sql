@@ -1487,7 +1487,7 @@ BEGIN
                 INSERT INTO 
                     ADMIN.TBL_PRODUTO (ID_PRODUTO,NOME_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO,ESTOQUE_PRODUTO) 
                 VALUES 
-                    (sq_id_produto.nextval,v_nomeProduto,v_precoProduto,v_custoProduto,NULLIF(v_estoqueProduto,0))
+                    (sq_id_produto.nextval,TRIM(v_nomeProduto),v_precoProduto,v_custoProduto,NULLIF(v_estoqueProduto,0))
                     ;
 
                 v_msgRetorno := 'Produto cadastrado com sucesso' ; -- Mensagem de retorno
@@ -1503,9 +1503,9 @@ BEGIN
                 UPDATE 
                     ADMIN.TBL_PRODUTO 
                 SET 
-                    NOME_PRODUTO        =   v_nomeProduto   ,
-                    PRECO_PRODUTO       =   v_precoProduto  ,
-                    CUSTO_PRODUTO       =   v_custoProduto  ,
+                    NOME_PRODUTO        =   TRIM(v_nomeProduto)             ,
+                    PRECO_PRODUTO       =   v_precoProduto                  ,
+                    CUSTO_PRODUTO       =   v_custoProduto                  ,
                     ESTOQUE_PRODUTO     =   NULLIF(v_estoqueProduto,0)
                 WHERE
                     ID_PRODUTO = v_idProduto
@@ -1712,7 +1712,7 @@ BEGIN
                 INSERT INTO 
                     ADMIN.TBL_CLIENTE (ID_CLIENTE,NOME_CLIENTE,SOBRENOME_CLIENTE,SEXO_CLIENTE,NASCIMENTO_CLIENTE,CELULAR_CLIENTE,EMAIL_CLIENTE) 
                 VALUES 
-                    (sq_id_cliente.nextval,v_nomeCliente,v_sobrenomeCliente,v_generoCliente,TO_DATE(v_nascimentoCliente,'dd-mm-yyyy'),v_celularCliente,v_emailCliente);
+                    (sq_id_cliente.nextval,TRIM(v_nomeCliente),TRIM(v_sobrenomeCliente),v_generoCliente,TO_DATE(v_nascimentoCliente,'dd-mm-yyyy'),v_celularCliente,TRIM(v_emailCliente));
 
                 v_msgRetorno := 'Cliente cadastrado com sucesso' ; -- Mensagem de retorno
 
@@ -1743,12 +1743,12 @@ BEGIN
                 UPDATE 
                     ADMIN.TBL_CLIENTE 
                 SET 
-                    NOME_CLIENTE            =   v_nomeCliente   ,
-                    SOBRENOME_CLIENTE       =   v_sobrenomeCliente  ,
+                    NOME_CLIENTE            =   TRIM(v_nomeCliente)   ,
+                    SOBRENOME_CLIENTE       =   TRIM(v_sobrenomeCliente)  ,
                     SEXO_CLIENTE            =   v_generoCliente  ,
                     NASCIMENTO_CLIENTE      =   TO_DATE(v_nascimentoCliente,'dd-mm-yyyy'),
                     CELULAR_CLIENTE         =   v_celularCliente,
-                    EMAIL_CLIENTE           =   v_emailCliente
+                    EMAIL_CLIENTE           =   TRIM(v_emailCliente)
                 WHERE
                     ID_CLIENTE = v_idCliente
                     ;
@@ -1912,7 +1912,7 @@ BEGIN
 
         WHEN v_procedimento IN ('I','U') THEN -- Insert or update
 
-            IF v_idCliente IS NULL OR v_dataPedido IS NULL THEN
+            IF v_idCliente IS NULL OR v_dataPedido IS NULL THEN -- Campos obrigatórios
 
                 RAISE v_camposObrigatorios; -- ERRO 
 
@@ -2070,6 +2070,27 @@ EXEC SP_PROCEDIMENTOS_PEDIDOS('U',1,1,'P','10-10-2022');
 -- Delete --
 
 EXEC SP_PROCEDIMENTOS_PEDIDOS('D',1,NULL,NULL,NULL);
+
+
+-- ----------------------- // -----------------------------------------------------
+
+
+-- Procedimentos Carrinho --
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
