@@ -6,7 +6,7 @@ Olá Sayajin 👊💥
 
 Seja bem-vindo ao primeiro projeto 😁✌️
 
-Esse projeto consiste no desenvolvimento de um e-commerce 🛒
+Esse projeto consiste no desenvolvimento de um Mini e-commerce 🛒
 
 Com base nas entidades essenciais como produto,cliente e pedido 🎯
 
