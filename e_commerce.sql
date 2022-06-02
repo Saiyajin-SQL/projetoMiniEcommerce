@@ -2498,23 +2498,168 @@ WHERE ROWNUM <= 10
 
 -- Top 10 Produtos mais vendidos --
 
+SELECT * FROM (
+
+SELECT
+    P1.ID_PRODUTO               AS          "ID"                ,
+    P1.NOME_PRODUTO             AS          "Produto"           ,
+    SUM(C1.QNT_PRODUTO)         AS          "Quantidade"
+
+FROM
+    TBL_PRODUTO P1
+INNER JOIN
+    TBL_CARRINHO C1
+ON
+    P1.ID_PRODUTO = C1.ID_PRODUTO
+INNER JOIN
+    TBL_PEDIDO P2
+ON
+    P2.ID_PEDIDO = C1.ID_PEDIDO
+WHERE
+    P2.SITUACAO_PAG IS NOT NULL
+GROUP BY
+    P1.ID_PRODUTO,P1.NOME_PRODUTO
+ORDER BY
+    SUM(C1.QNT_PRODUTO) DESC
+
+) 
+
+WHERE ROWNUM <= 10
+
+;
+
 -- Top 10 Produtos com maior faturamento --
+
+SELECT * FROM (
+
+SELECT
+    P1.ID_PRODUTO               AS          "ID"                ,
+    P1.NOME_PRODUTO             AS          "Produto"           ,
+    SUM((C1.PRECO_PRODUTO*C1.QNT_PRODUTO)-(C1.CUSTO_PRODUTO*C1.QNT_PRODUTO)) AS "Faturamento"
+
+FROM
+    TBL_PRODUTO P1
+INNER JOIN
+    TBL_CARRINHO C1
+ON
+    P1.ID_PRODUTO = C1.ID_PRODUTO
+INNER JOIN
+    TBL_PEDIDO P2
+ON
+    P2.ID_PEDIDO = C1.ID_PEDIDO
+WHERE
+    P2.SITUACAO_PAG IS NOT NULL
+GROUP BY
+    P1.ID_PRODUTO,P1.NOME_PRODUTO
+ORDER BY
+    "Faturamento" DESC
+
+) 
+
+WHERE ROWNUM <= 10
+
+;
 
 -- Top 10 clientes com mais pedidos pendentes --
 
+SELECT * FROM (
+
+SELECT
+    C1.ID_CLIENTE                               AS          "ID"                ,
+    C1.NOME_CLIENTE || C1.SOBRENOME_CLIENTE     AS          "Nome Completo"     ,
+    COUNT(*)                                    AS          "Total"
+FROM
+    TBL_CLIENTE C1
+INNER JOIN
+    TBL_PEDIDO P1
+ON
+    C1.ID_CLIENTE = P1.ID_CLIENTE
+WHERE
+    P1.SITUACAO_PAG IS NULL
+GROUP BY
+    C1.ID_CLIENTE,C1.NOME_CLIENTE || C1.SOBRENOME_CLIENTE
+ORDER BY
+    "Total" DESC
+) 
+
+WHERE ROWNUM <= 10
+
+;
+
 -- Produtos zerados no estoque --
 
--- Produto com maior custo --
+SELECT
+    P1.ID_PRODUTO           AS      "ID"        ,
+    P1.NOME_PRODUTO         AS      "Produto"   ,
+    P1.ESTOQUE_PRODUTO      AS      "Qnt"       
 
--- Produto com maior faturamento --
+FROM 
+    TBL_PRODUTO P1
+WHERE
+    P1.ESTOQUE_PRODUTO = 0
+ORDER BY
+    P1.ID_PRODUTO
+    ;
+
+-- Produto com maior custo total --
+
+SELECT * FROM (
+
+SELECT
+    P1.ID_PRODUTO                           AS          "ID"                ,
+    P1.NOME_PRODUTO                         AS          "Produto"           ,
+    SUM(C1.CUSTO_PRODUTO*C1.QNT_PRODUTO)    AS          "Custo Total"
+
+FROM
+    TBL_PRODUTO P1
+INNER JOIN
+    TBL_CARRINHO C1
+ON
+    P1.ID_PRODUTO = C1.ID_PRODUTO
+GROUP BY
+    P1.ID_PRODUTO,P1.NOME_PRODUTO
+ORDER BY
+    "Custo Total" DESC
+
+) 
+
+WHERE ROWNUM = 1
+
+;
+
 
 -- Faturamento Mensal --
 
+SELECT
+    TO_CHAR(P1.DATA_PEDIDO,'YYYY')                                             AS      "Ano",
+    TO_CHAR(P1.DATA_PEDIDO,'MM')                                                AS     "Nº Mês",
+    TO_CHAR(P1.DATA_PEDIDO,'MONTH')                                             AS      "Mês",
+    SUM((C1.PRECO_PRODUTO*C1.QNT_PRODUTO)-(C1.CUSTO_PRODUTO*C1.QNT_PRODUTO))    AS "Faturamento"
+FROM 
+    TBL_PEDIDO P1
+INNER JOIN
+    TBL_CARRINHO C1
+ON
+    P1.ID_PEDIDO = C1.ID_PEDIDO
+WHERE
+    P1.SITUACAO_PAG IS NOT NULL
+GROUP BY
+   TO_CHAR(P1.DATA_PEDIDO,'YYYY'),TO_CHAR(P1.DATA_PEDIDO,'MM'), TO_CHAR(P1.DATA_PEDIDO,'MONTH')
+ORDER BY
+    "Ano",TO_CHAR(P1.DATA_PEDIDO,'MM') ASC
+    ;
+
 -- Mês com maior faturamento --
+
+
 
 -- Mês com menor faturamento --
 
+
+
 -- Mês com maior prejuízo --
+
+
 
 -- -----------------------------------------------
 
