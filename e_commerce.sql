@@ -22,7 +22,7 @@
 
 
 -- Canal Sayajin SQL    >> https://www.youtube.com/channel/UC6aR2nPTkD6GECmEjQBEWtQ
--- Github               >> https://github.com/Sayajin-SQL
+-- Github               >> https://github.com/Sayajin-SQL/projetoMiniEcommerce
 -- Email                >> sayajinsql@outloook.com
 
 .
