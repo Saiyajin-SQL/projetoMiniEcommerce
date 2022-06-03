@@ -22,7 +22,7 @@
 
 
 -- Canal Sayajin SQL    >> https://www.youtube.com/channel/UC6aR2nPTkD6GECmEjQBEWtQ
--- Github               >> https://github.com/Sayajin-SQL/projetoMiniEcommerce
+-- Github               >> https://github.com/Sayajin-SQL
 -- Email                >> sayajinsql@outloook.com
 
 .
@@ -504,7 +504,19 @@ SELECT * FROM tbl_cliente ORDER BY id_cliente;
 
 -- Pedido + Carrinho --
 
--- Pedido 01 -- Pendente --
+-- Pedido 01 --
+
+-- Informações --
+
+-- ID           : 1
+-- ID Cliente   : 1
+-- Pagamento    : Pendente
+-- Data         : Hoje + 1
+
+-- Carrinho --
+
+-- Produto      : 01
+-- Qnt          : 2 unid
 
 INSERT INTO 
     ADMIN.TBL_PEDIDO (ID_PEDIDO,ID_CLIENTE,SITUACAO_PAG,DATA_PEDIDO) 
@@ -538,7 +550,21 @@ SELECT * FROM tbl_carrinho  ORDER BY id_pedido;
 
 -- ------------------------ // ------------------------
 
--- Pedido 02 -- Pago --
+-- Pedido 02 --
+
+-- Informações --
+
+-- ID           : 2
+-- ID Cliente   : 2
+-- Pagamento    : Pago
+-- Data         : Hoje + 2
+
+-- Carrinho --
+
+-- Produto      : 03
+-- Qnt          : 3 unid
+-- Produto      : 04
+-- Qnt          : 1 unid
 
 INSERT INTO 
     ADMIN.TBL_PEDIDO (ID_PEDIDO,ID_CLIENTE,SITUACAO_PAG,DATA_PEDIDO) 
@@ -585,7 +611,22 @@ SELECT * FROM tbl_carrinho  ORDER BY id_pedido;
 
 -- ------------------------ // ------------------------
 
--- Pedido 03 -- Pago --
+-- Pedido 03 --
+
+-- Informações --
+
+-- ID           : 3
+-- ID Cliente   : 5
+-- Pagamento    : Pago
+-- Data         : Hoje + 4
+
+-- Carrinho --
+
+-- Produto      : 01
+-- Qnt          : 1 unid
+-- Produto      : 04
+-- Qnt          : 1 unid
+
 
 INSERT INTO 
     ADMIN.TBL_PEDIDO (ID_PEDIDO,ID_CLIENTE,SITUACAO_PAG,DATA_PEDIDO) 
@@ -769,7 +810,7 @@ WHERE
 
 -- Cancelar pedido 01 --
 
-DELETE FROM tbl_pedido WHERE ID_PEDIDO = 1 ;
+DELETE FROM tbl_pedido WHERE ID_PEDIDO = 2 ;
 
 COMMIT ;
 
@@ -804,6 +845,7 @@ COMMIT ;
 
 -- -------------------------------------------------------------------------------------------------------
 
+-- Tabela Produto | View Tabela Produto --
 
 --- CREATE OR REPLACE VIEW vw_tbl_produto AS
 SELECT
@@ -819,35 +861,32 @@ ORDER BY
     id_produto
     ;
 
--- Tabela Produto | View Tabela Produto --
-
 SELECT * FROM tbl_produto ORDER BY id_Produto;
 
 SELECT * FROM vw_tbl_produto;
 
 -- ------------------------ // ------------------------
 
+    -- Tabela Cliente | View Tabela Cliente --
 
 -- CREATE OR REPLACE VIEW vw_tbl_cliente AS
 SELECT
-    ID_CLIENTE                                      AS  "ID"            ,
-    NOME_CLIENTE                                    AS  "Nome"          ,
-    SOBRENOME_CLIENTE                               AS  "Sobrenome"     ,
+    ID_CLIENTE                                                                      AS  "ID"            ,
+    NOME_CLIENTE                                                                    AS  "Nome"          ,
+    SOBRENOME_CLIENTE                                                               AS  "Sobrenome"     ,
     CASE SEXO_CLIENTE
         WHEN 'M' THEN 'Masculino'
         WHEN 'F' THEN 'Feminino'
-        END                                         AS  "Gênero"        ,
-    TO_CHAR(NASCIMENTO_CLIENTE,'dd-mm-yyyy')        AS  "Nascimento"    ,
-    trunc((months_between(sysdate, to_date(NASCIMENTO_CLIENTE,'dd/mm/yyyy')))/12) AS "Idade",
-    CELULAR_CLIENTE                                 AS  "Celular"       ,
-    EMAIL_CLIENTE                                   AS  "Email"
+        END                                                                         AS  "Gênero"        ,
+    TO_CHAR(NASCIMENTO_CLIENTE,'dd-mm-yyyy')                                        AS  "Nascimento"    ,
+    trunc((months_between(sysdate, to_date(NASCIMENTO_CLIENTE,'dd/mm/yyyy')))/12)   AS  "Idade"         ,
+    CELULAR_CLIENTE                                                                 AS  "Celular"       ,
+    EMAIL_CLIENTE                                                                   AS  "Email"
 FROM
     ADMIN.TBL_CLIENTE
 ORDER BY
     ID_CLIENTE
     ;
-
-    -- Tabela Cliente | View Tabela Cliente --
 
 SELECT * FROM tbl_cliente ORDER BY id_cliente;
 
@@ -856,29 +895,30 @@ SELECT * FROM vw_tbl_cliente;
 
 -- ------------------------ // ------------------------
 
+-- Tabela Pedido | View Tabela Pedido -- 
 
 -- CREATE OR REPLACE VIEW vw_tbl_pedido AS
 SELECT
-    ID_PEDIDO                               AS  "Nº Pedido",
-    ID_CLIENTE                              AS  "ID do Cliente",
+    ID_PEDIDO                                       AS  "Nº Pedido"         ,
+    ID_CLIENTE                                      AS  "ID do Cliente"     ,
     CASE 
         WHEN SITUACAO_PAG IS NULL THEN 'Pendente' 
         ELSE                            'Pago' 
-        END                                 AS  "Situação",
-    TO_CHAR(DATA_PEDIDO,'dd-mm-YYYY')       AS  "Data"
+        END                                         AS  "Situação"          ,
+    TO_CHAR(DATA_PEDIDO,'dd-mm-YYYY')               AS  "Data"
 FROM
     ADMIN.TBL_PEDIDO
 ORDER BY
     ID_PEDIDO
     ;
 
--- Tabela Pedido | View Tabela Pedido -- 
-
 SELECT * FROM tbl_pedido ORDER BY  id_pedido;
 
 SELECT * FROM vw_tbl_pedido;
 
 -- ------------------------ // ------------------------
+
+-- Tabela Carrinho | View Tabela Carrinho -- 
 
 -- CREATE OR REPLACE VIEW vw_tbl_carrinho AS
 SELECT
@@ -896,8 +936,6 @@ ORDER BY
     ID_PEDIDO
     ;
 
--- Tabela Carrinho | View Tabela Carrinho -- 
-
 SELECT * FROM tbl_carrinho ORDER BY id_pedido ;
 
 SELECT * FROM vw_tbl_carrinho;
@@ -908,14 +946,14 @@ SELECT * FROM vw_tbl_carrinho;
 
 --CREATE OR REPLACE VIEW vw_tbl_resumo_pedido AS
 SELECT
-    P1.ID_PEDIDO                               AS  "Nº Pedido"           ,
-    SUM(C1.QNT_PRODUTO)                        AS  "Quantidade"          ,
-    SUM(C1.PRECO_PRODUTO*C1.QNT_PRODUTO)            AS  "Preço Total"         ,
+    P1.ID_PEDIDO                                        AS  "Nº Pedido"           ,
+    SUM(C1.QNT_PRODUTO)                                 AS  "Quantidade"          ,
+    SUM(C1.PRECO_PRODUTO*C1.QNT_PRODUTO)                AS  "Preço Total"         ,
     CASE 
         WHEN P1.SITUACAO_PAG IS NULL THEN 'Pendente' 
         ELSE                            'Pago' 
-        END                                    AS  "Situação"          ,
-    TO_CHAR(P1.DATA_PEDIDO,'dd-mm-yyyy')       AS  "Data"
+        END                                             AS  "Situação"          ,
+    TO_CHAR(P1.DATA_PEDIDO,'dd-mm-yyyy')                AS  "Data"
 
 FROM
     ADMIN.TBL_PEDIDO    P1
@@ -1127,7 +1165,7 @@ BEGIN
 
     ELSIF DELETING THEN
 
-        UPDATE TBL_PRODUTO SET ESTOQUE_PRODUTO = ESTOQUE_PRODUTO - :NEW.QNT_PRODUTO WHERE ID_PRODUTO = :NEW.ID_PRODUTO;
+        UPDATE TBL_PRODUTO SET ESTOQUE_PRODUTO = ESTOQUE_PRODUTO + :OLD.QNT_PRODUTO WHERE ID_PRODUTO = :OLD.ID_PRODUTO;
 
     END IF;
 
@@ -2100,7 +2138,7 @@ BEGIN
                 RAISE v_idExiste; -- erro
             END IF;
 
-                DELETE FROM 
+            DELETE FROM 
                 ADMIN.TBL_PEDIDO 
             WHERE
                 ID_PEDIDO = v_idPedido
@@ -2181,7 +2219,7 @@ EXEC SP_PROCEDIMENTOS_PEDIDOS('U',5,1,'P','01-01-2022');
 
 -- Delete --
 
-EXEC SP_PROCEDIMENTOS_PEDIDOS('D',1,NULL,NULL,NULL);
+EXEC SP_PROCEDIMENTOS_PEDIDOS('D',8,NULL,NULL,NULL);
 
 
 -- ----------------------- // -----------------------------------------------------
@@ -2206,6 +2244,7 @@ IS
 
     v_precoProduto          DECIMAL     (9,2)    ; -- Preço do produto
     v_custoProduto          DECIMAL     (9,2)    ; -- Custo do produto
+    v_estoqueProduto        INT                  ; -- Qnt de estoque do produto
 
 
     -- EXCEPTION --
@@ -2216,10 +2255,9 @@ IS
     v_procedimentoIncorreto     EXCEPTION; -- Erro tipo de procedimento
 
     v_verificarPedidoProduto    EXCEPTION; -- Verificar se o pedido e o produto existem
-
-    v_verificarProdutoDuplicado  EXCEPTION; -- Verificar se o produto existe
-
+    v_verificarProdutoDuplicado EXCEPTION; -- Verificar se o produto existe
     v_checkQuantidade           EXCEPTION; -- Verificar se a qnt é maior que 0
+    v_estoqueIndisponivel       EXCEPTION; -- Verificar se a qnt é maior que 0
 
 
 BEGIN
@@ -2267,11 +2305,19 @@ BEGIN
 
             IF v_procedimento = 'I' THEN -- Insert --
 
-                 SELECT COUNT(*) INTO v_registros FROM TBL_CARRINHO WHERE ID_PEDIDO = v_idPedido AND ID_PRODUTO = v_idProduto; -- Verificar se o produto existe
+                SELECT COUNT(*) INTO v_registros FROM TBL_CARRINHO WHERE ID_PEDIDO = v_idPedido AND ID_PRODUTO = v_idProduto; -- Verificar se o produto existe
 
                 IF v_registros > 0 THEN
                     
                     RAISE v_verificarProdutoDuplicado;
+
+                END IF;
+
+                SELECT ESTOQUE_PRODUTO INTO v_estoqueProduto FROM TBL_PRODUTO WHERE ID_PRODUTO = v_idProduto; -- Verificar quantidade no estoque
+
+                IF v_estoqueProduto < v_qntProduto THEN
+
+                    RAISE v_estoqueIndisponivel;
 
                 END IF;
 
@@ -2288,6 +2334,16 @@ BEGIN
                 v_msgRetorno := 'Produto adicionado ao carrinho' ; -- Mensagem de retorno
 
             ELSIF v_procedimento = 'U' THEN -- Update --
+
+                SELECT ESTOQUE_PRODUTO INTO v_estoqueProduto FROM TBL_PRODUTO WHERE ID_PRODUTO = v_idProduto; -- Verificar quantidade no estoque
+
+                SELECT QNT_PRODUTO INTO v_registros FROM TBL_CARRINHO WHERE ID_PEDIDO = v_idPedido AND ID_PRODUTO = v_idProduto; -- Verificar qnt no carrinho
+
+                IF (v_qntProduto-v_registros)>v_estoqueProduto THEN
+
+                    RAISE v_estoqueIndisponivel;
+
+                END IF;
 
                 UPDATE 
                     ADMIN.TBL_CARRINHO 
@@ -2307,7 +2363,7 @@ BEGIN
 
         WHEN v_procedimento = 'D' THEN -- delete
 
-                DELETE FROM 
+            DELETE FROM 
                 ADMIN.TBL_CARRINHO 
             WHERE
                  ID_PEDIDO = v_idPedido
@@ -2359,6 +2415,14 @@ BEGIN
         v_msgRetorno := 'Produto não adicionado ao carrinho' ; -- Mensagem de retorno
         SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
 
+    WHEN v_estoqueIndisponivel THEN -- Verificar qnt no estoque
+        v_msgRetorno := 'Quantidade de estoque indisponível' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
+    WHEN v_verificarProdutoDuplicado THEN -- Produto já adicionado
+        v_msgRetorno := 'Altere a quantidade do produto' ; -- Mensagem de retorno
+        SP_RETORNAR_TABELA('SELECT ''' || v_msgRetorno ||''' "Retorno" FROM DUAL'); -- Retornar mensagem
+
 
     WHEN OTHERS THEN -- Outro erro
 
@@ -2377,16 +2441,13 @@ END;
 
 -- Executar comando --
 
-SELECT * FROM TBL_PEDIDO WHERE ID_PEDIDO = 2;
-SELECT * FROM TBL_CARRINHO WHERE ID_PEDIDO = 2;
-
 -- Insert --
 
-EXEC SP_PROCEDIMENTOS_CARRINHO('I',2,41,2);
+EXEC SP_PROCEDIMENTOS_CARRINHO('I',15,1,1000);
 
 -- Update --
 
-EXEC SP_PROCEDIMENTOS_CARRINHO('U',2,41,5);
+EXEC SP_PROCEDIMENTOS_CARRINHO('U',15,3,100);
 
 -- Delete --
 
