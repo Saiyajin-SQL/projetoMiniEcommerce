@@ -22,6 +22,7 @@ Para isso instalei a extensão Oracle Developer Tool for VS CODE 😊✍️
 
 📄 Conteúdo do Projeto
 
+✅ Preparando o ambiente <br>
 ✅ Modelagem <br>
 ✅ Criação de tabelas<br>
 ✅ Insert<br>
