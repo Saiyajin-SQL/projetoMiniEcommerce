@@ -2,7 +2,7 @@
 
 /*
 
-        -- Bem Vindos Sayajins --
+        -- Bem Vindos Saiyajins --
 
 ⣿⣿⠿⠿⠿⠿⣿⣷⣂⠄⠄⠄⠄⠄⠄⠈⢷⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ⣷⡾⠯⠉⠉⠉⠉⠚⠑⠄⡀⠄⠄⠄⠄⠄⠈⠻⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
@@ -22,8 +22,8 @@
 
 
 -- Canal Sayajin SQL    >> https://www.youtube.com/channel/UC6aR2nPTkD6GECmEjQBEWtQ
--- Github               >> https://github.com/Sayajin-SQL
--- Email                >> sayajinsql@outloook.com
+-- Github               >> https://github.com/Saiyajin-SQL
+-- Email                >> saiyajinsql@outloook.com
 
 .
 .
