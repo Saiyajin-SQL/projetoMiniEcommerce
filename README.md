@@ -2,7 +2,7 @@
 
 <img width="200" height="200" align="center" style="border-radius:50px;" src="https://media1.tenor.com/images/9b790346428732ac43343d1a72d3d0bc/tenor.gif?itemid=12582418" />
 
-Olá Sayajin 👊💥
+Olá Saiyajin 👊💥
 
 Seja bem-vindo ao primeiro projeto 😁✌️
 
