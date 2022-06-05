@@ -95,6 +95,12 @@
 
 -- -------------------------------------------------------------------------------------------------------
 
+-- 1. Análise de requisitos
+-- 2. Modelo Conceitual
+-- 3. Modelo Lógico
+-- 4. Modelo Físico
+-- 5. Dicionário de dados
+
 
 -- 1. Entidades 
 
@@ -107,10 +113,10 @@
 
 
 
-     PRODUTO --N---N-- PEDIDO -N---1- CLIENTE  
-                 |
-                 |
-              CARRINHO
+     PRODUTO --(1,N)---(0,N)-- PEDIDO -(N,0)---(1,N)- CLIENTE  
+                     |
+                     |
+                  CARRINHO
 
 
 */
