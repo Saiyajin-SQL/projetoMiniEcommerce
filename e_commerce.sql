@@ -44,23 +44,41 @@
 
 -- -------------------------------------------------------------------------------------------------------
 
---                                          >> SUMÁRIO <<
+--                                          >> CONTEÚDO <<
 
 -- -------------------------------------------------------------------------------------------------------
 
+--                                                 🧍‍♂️ Normal 🧍‍♂️
 
 -- 1. Modelagem
 -- 2. Criação de tabelas
+
+--                                           ⚡ Super Saiyajin 1 ⚡
+
 -- 3. Insert
 -- 4. Update
 -- 5. Delete
+
+--                                          ⚡⚡ Super Saiyajin 2 ⚡⚡
+
 -- 6. Select | Views
 -- 7. Funções
+
+--                                          ⚡⚡ Super Saiyajin 3 ⚡⚡
+
 -- 8. Triggers
 -- 9. Procedimentos Armazenados
+
+--                                           🔴 Super Saiyajin God 🔴
+
 -- 10. Cursores
 -- 11. Joins
+
+--                                           🔵 Super Saiyajin Blue 🔵
+
 -- 12. Controle de Usuários
+
+--                                            ✨ Instinto Superior ✨
 
 
 -- -------------------------------------------------------------------------------------------------------
