@@ -64,7 +64,7 @@
 -- 6. Select | Views
 -- 7. Funções
 
---                                          ⚡⚡ Super Saiyajin 3 ⚡⚡
+--                                         ⚡⚡⚡ Super Saiyajin 3 ⚡⚡⚡
 
 -- 8. Triggers
 -- 9. Procedimentos Armazenados
