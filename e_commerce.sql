@@ -80,7 +80,7 @@
 
 --                                            ✨ Instinto Superior ✨
 
--- 13. Considerações Finais
+-- 13. Finalização do projeto
 
 
 -- -------------------------------------------------------------------------------------------------------
@@ -97,6 +97,8 @@
 
 -- -------------------------------------------------------------------------------------------------------
 
+-- Etapas --
+
 -- 1. Análise de requisitos
 -- 2. Modelo Conceitual
 -- 3. Modelo Lógico
@@ -104,7 +106,7 @@
 -- 5. Dicionário de dados
 
 
--- 1. Entidades 
+-- 1. Modelo Conceitual
 
 /*
 
