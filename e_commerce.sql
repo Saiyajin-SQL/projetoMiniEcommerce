@@ -116,7 +116,7 @@
     -- 1.4 Carrinho     (Associativa)
 
 
-     PRODUTO --N--contém--N-- PEDIDO -N--solicita--1- CLIENTE  
+     PRODUTO --N--contém--N-- PEDIDO -N--realiza--1- CLIENTE  
                     |
                     |
                 CARRINHO
