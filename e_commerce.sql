@@ -48,9 +48,9 @@
 
 -- -------------------------------------------------------------------------------------------------------
 
---                                                 🧍‍♂️ Normal 🧍‍♂️
+--                                              🧍‍♂️ Iniciante 🧍‍♂️
 
--- 1. Modelagem
+-- 1. Modelagem de dados
 -- 2. Criação de tabelas
 
 --                                           ⚡ Super Saiyajin 1 ⚡
@@ -93,17 +93,17 @@
 */
 -- -------------------------------------------------------------------------------------------------------
 
---                                          >> MODELO RELACIONAL <<
+--                                          >> MODELAGEM DE DADOS <<
 
 -- -------------------------------------------------------------------------------------------------------
 
 -- Etapas --
 
--- 1. Análise de requisitos
--- 2. Modelo Conceitual
--- 3. Modelo Lógico
--- 4. Modelo Físico
--- 5. Dicionário de dados
+-- 1. Análise de requisitos - Requisitos da aplicação | Regra de negócio
+-- 2. Modelo Conceitual - Entidades | Propriedades | Relacionamento | Cardinalidade
+-- 3. Modelo Lógico - Colunas | Tipo de dados | Chaves
+-- 4. Modelo Físico - Create table...
+-- 5. Dicionário de dados - Resumo do banco
 
 
 -- 1. Modelo Conceitual
@@ -116,11 +116,10 @@
     -- 1.4 Carrinho     (Associativa)
 
 
-
-     PRODUTO --(1,N)---(0,N)-- PEDIDO -(N,0)---(1,N)- CLIENTE  
-                     |
-                     |
-                  CARRINHO
+     PRODUTO --N--contém--N-- PEDIDO -N--solicita--1- CLIENTE  
+                    |
+                    |
+                CARRINHO
 
 
 */
