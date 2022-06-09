@@ -696,6 +696,10 @@ SELECT * FROM tbl_carrinho  ORDER BY id_pedido;
 
 -- -------------------------------------------------------------------------------------------------------
 
+-- Visualizar tabela do carrinho
+
+SELECT * FROM TBL_CARRINHO ORDER BY ID_PEDIDO;
+
 -- Atualizar saída de estoque --
 
 -- Simulando trigger de saída de estoque --
