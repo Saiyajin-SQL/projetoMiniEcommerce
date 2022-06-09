@@ -566,14 +566,6 @@ VALUES (
     (SELECT CUSTO_PRODUTO FROM tbl_produto WHERE id_produto = 1))
     ;
 
--- Comitando inserts --
-
-COMMIT;
-
--- Retornando tabela de pedidos e carrinho --
-
-SELECT * FROM tbl_pedido    ORDER BY id_pedido;
-SELECT * FROM tbl_carrinho  ORDER BY id_pedido;
 
 -- ------------------------ // ------------------------
 
@@ -626,14 +618,6 @@ VALUES (
     (SELECT CUSTO_PRODUTO FROM tbl_produto WHERE id_produto = 4))
     ;
 
--- Comitando inserts --
-
-COMMIT;
-
--- Retornando tabela de pedidos e carrinho --
-
-SELECT * FROM tbl_pedido    ORDER BY id_pedido;
-SELECT * FROM tbl_carrinho  ORDER BY id_pedido;
 
 
 -- ------------------------ // ------------------------
