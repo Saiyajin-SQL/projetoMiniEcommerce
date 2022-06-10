@@ -796,7 +796,7 @@ WHERE
 
 -- ------------------------ // ------------------------
 
--- Verificar qnt no carrinho do pedido 01 --
+-- Verificar qnt no carrinho do pedido 01 -- 2 unid --
 
 SELECT 
     ID_PEDIDO,
@@ -810,7 +810,7 @@ WHERE
 
 -- ------------------------ // ------------------------
 
--- Verificar qnt de estoque do produto 01 --
+-- Verificar qnt de estoque do produto 01 -- 7 unid --
 
 SELECT 
     ID_PRODUTO,
