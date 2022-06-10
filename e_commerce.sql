@@ -862,7 +862,7 @@ COMMIT ;
 
 -- Tabela Produto | View Tabela Produto --
 
---- CREATE OR REPLACE VIEW vw_tbl_produto AS
+CREATE OR REPLACE VIEW vw_tbl_produto AS
 SELECT
     ID_PRODUTO                              AS  "ID"        ,
     NOME_PRODUTO                            AS  "Nome"      ,
@@ -884,7 +884,7 @@ SELECT * FROM vw_tbl_produto;
 
     -- Tabela Cliente | View Tabela Cliente --
 
--- CREATE OR REPLACE VIEW vw_tbl_cliente AS
+CREATE OR REPLACE VIEW vw_tbl_cliente AS
 SELECT
     ID_CLIENTE                                                                      AS  "ID"            ,
     NOME_CLIENTE                                                                    AS  "Nome"          ,
@@ -912,7 +912,7 @@ SELECT * FROM vw_tbl_cliente;
 
 -- Tabela Pedido | View Tabela Pedido -- 
 
--- CREATE OR REPLACE VIEW vw_tbl_pedido AS
+CREATE OR REPLACE VIEW vw_tbl_pedido AS
 SELECT
     ID_PEDIDO                                       AS  "Nº Pedido"         ,
     ID_CLIENTE                                      AS  "ID do Cliente"     ,
@@ -935,7 +935,7 @@ SELECT * FROM vw_tbl_pedido;
 
 -- Tabela Carrinho | View Tabela Carrinho -- 
 
--- CREATE OR REPLACE VIEW vw_tbl_carrinho AS
+CREATE OR REPLACE VIEW vw_tbl_carrinho AS
 SELECT
     ID_PEDIDO                                                       AS  "Nº do Pedido"      ,
     ID_PRODUTO                                                      AS  "Id do Produto"     ,
@@ -959,7 +959,7 @@ SELECT * FROM vw_tbl_carrinho;
 
 -- Pedido + Carrinho --
 
---CREATE OR REPLACE VIEW vw_tbl_resumo_pedido AS
+CREATE OR REPLACE VIEW vw_tbl_resumo_pedido AS
 SELECT
     P1.ID_PEDIDO                                        AS  "Nº Pedido"           ,
     SUM(C1.QNT_PRODUTO)                                 AS  "Quantidade"          ,
@@ -988,7 +988,7 @@ SELECT * FROM vw_tbl_resumo_pedido;
 
 -- Faturamento pedidos --
 
--- CREATE OR REPLACE VIEW vw_tbl_faturamento_pedido AS
+CREATE OR REPLACE VIEW vw_tbl_faturamento_pedido AS
 SELECT
     ID_PEDIDO                                                           AS  "Nº do Pedido"      ,
     SUM(QNT_PRODUTO)                                                    AS  "Quantidade"        ,
