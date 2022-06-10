@@ -825,7 +825,7 @@ WHERE
 
 -- Cancelar pedido 01 --
 
-DELETE FROM tbl_pedido WHERE ID_PEDIDO = 2 ;
+DELETE FROM tbl_pedido WHERE ID_PEDIDO = 1 ;
 
 COMMIT ;
 
