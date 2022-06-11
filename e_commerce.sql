@@ -894,7 +894,6 @@ SELECT
         WHEN 'F' THEN 'Feminino'
         END                                                                         AS  "Gênero"        ,
     TO_CHAR(NASCIMENTO_CLIENTE,'dd-mm-yyyy')                                        AS  "Nascimento"    ,
-    trunc((months_between(sysdate, to_date(NASCIMENTO_CLIENTE,'dd/mm/yyyy')))/12)   AS  "Idade"         ,
     CELULAR_CLIENTE                                                                 AS  "Celular"       ,
     EMAIL_CLIENTE                                                                   AS  "Email"
 FROM
