@@ -1079,7 +1079,7 @@ SELECT FUNC_RETORNAR_ESTOQUE(1) "Estoque" FROM DUAL;
 
 -- Válidação de data
 
-create function test_date(d varchar2) return varchar2
+create or replace function test_date(d varchar2) return varchar2
 is
   v_date date;
 begin
@@ -1087,6 +1087,8 @@ begin
   return 'Valid';
   exception when others then return 'Invalid';
 end;
+
+SELECT test_date('01/01/2022') Validacao FROM DUAL;
 
 
 -- -------------------------------------------------------------------------------------------------------
