@@ -1191,32 +1191,32 @@ END;
 
 -- Testando Triggers --
 
--- Estoque Produto 01 -- 58 unidades --
+-- Estoque Produto 03 -- 3 unidades --
 
-SELECT ESTOQUE_PRODUTO FROM TBL_PRODUTO WHERE ID_PRODUTO = 1;
+SELECT ESTOQUE_PRODUTO FROM TBL_PRODUTO WHERE ID_PRODUTO = 3;
 
--- Carrinho -- 4 unidades --
+-- Carrinho -- 3 unidades --
 
-SELECT * FROM TBL_CARRINHO WHERE ID_PRODUTO = 1;
+SELECT * FROM TBL_CARRINHO WHERE ID_PRODUTO = 3;
 
--- Update -- Carinho -- Retirando 1 unidade --
+-- Update -- Carrinho -- Retirando 1 unidade --
 
 UPDATE 
     TBL_CARRINHO
 SET
     QNT_PRODUTO = QNT_PRODUTO - 1
 WHERE 
-    ID_PRODUTO = 1
+    ID_PRODUTO = 3
     ;
 
--- Update -- Carinho -- Adicionando 1 unidade --
+-- Update -- Carrinho -- Adicionando 1 unidade --
 
 UPDATE 
     TBL_CARRINHO
 SET
     QNT_PRODUTO = QNT_PRODUTO + 1
 WHERE 
-    ID_PRODUTO = 1
+    ID_PRODUTO = 3
     ;
 
 
