@@ -1280,7 +1280,7 @@ COMMIT;
 
 -- Criando procedimentos armazenados --
 -- Procedimentos para inserir registros --
--- Procedimentos para coamndos DML nas tabelas | Aplicação --
+-- Procedimentos para comandos DML nas tabelas | Aplicação --
 
 
 -- Sequencias --
@@ -1345,7 +1345,19 @@ END;
 
 EXEC SP_ZERAR_TABELA('SEQ_ID_PEDIDO','TBL_PEDIDO');
 EXEC SP_ZERAR_TABELA('SQ_ID_CLIENTE','TBL_CLIENTE');
+
+ALTER TRIGGER TRG_CONTROLE_ESTOQUE DISABLE; -- Inativar trigger
+
 EXEC SP_ZERAR_TABELA('SQ_ID_PRODUTO','TBL_PRODUTO');
+
+ALTER TRIGGER TRG_CONTROLE_ESTOQUE ENABLE; -- ativar trigger
+
+-- Verificar tabelas
+
+SELECT * FROM TBL_CLIENTE;
+SELECT * FROM TBL_PRODUTO;
+SELECT * FROM TBL_PEDIDO;
+
 
 -- ------------------------ // ------------------------
 
@@ -1612,6 +1624,12 @@ END;
 
 EXEC SP_INSERIR_PEDIDOS(50);
 
+-- Tabelas
+
+SELECT * FROM TBL_PRODUTO ORDER BY ID_PRODUTO;
+SELECT * FROM TBL_CLIENTE ORDER BY ID_CLIENTE;
+SELECT * FROM TBL_PEDIDO ORDER BY ID_PEDIDO;
+SELECT * FROM TBL_CARRINHO ORDER BY ID_PEDIDO;
 
 
 -- ------------------------ // ------------------------
