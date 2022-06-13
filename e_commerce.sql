@@ -1191,34 +1191,75 @@ END;
 
 -- Testando Triggers --
 
--- Estoque Produto 03 -- 3 unidades --
+-- Estoque -- produto 2 -- 5 unid
 
-SELECT ESTOQUE_PRODUTO FROM TBL_PRODUTO WHERE ID_PRODUTO = 3;
+SELECT ESTOQUE_PRODUTO FROM TBL_PRODUTO WHERE ID_PRODUTO = 2;
 
--- Carrinho -- 3 unidades --
+-- Tabela de pedidos -- Pedido 2
 
-SELECT * FROM TBL_CARRINHO WHERE ID_PRODUTO = 3;
+SELECT
+    P1.ID_PEDIDO            AS "ID PEDIDO"      ,
+    C1.ID_PRODUTO           AS "ID PRODUTO"     ,
+    C1.QNT_PRODUTO          AS "QNT CARRINHO"    ,
+    P2.ESTOQUE_PRODUTO      AS "QNT ESTOQUE"
 
--- Update -- Carrinho -- Retirando 1 unidade --
+FROM 
+    TBL_PEDIDO P1
+INNER JOIN
+    TBL_CARRINHO C1
+ON
+    P1.ID_PEDIDO = C1.ID_PEDIDO
+INNER JOIN
+    TBL_PRODUTO P2
+ON
+    C1.ID_PRODUTO = P2.ID_PRODUTO
+WHERE
+    P1.ID_PEDIDO = 2
+;
 
-UPDATE 
-    TBL_CARRINHO
-SET
-    QNT_PRODUTO = QNT_PRODUTO - 1
-WHERE 
-    ID_PRODUTO = 3
+-- Adicionando -- Pedido 2 -- Produto 2 -- 2 unid
+
+INSERT INTO 
+    ADMIN.TBL_CARRINHO (ID_PEDIDO,ID_PRODUTO,QNT_PRODUTO,PRECO_PRODUTO,CUSTO_PRODUTO) 
+VALUES (
+    2,
+    2,
+    2,
+    (SELECT PRECO_PRODUTO FROM tbl_produto WHERE id_produto = 2),
+    (SELECT CUSTO_PRODUTO FROM tbl_produto WHERE id_produto = 2))
     ;
 
--- Update -- Carrinho -- Adicionando 1 unidade --
+COMMIT;
 
-UPDATE 
+-- Adicionado + 1 unid
+
+UPDATE
     TBL_CARRINHO
 SET
     QNT_PRODUTO = QNT_PRODUTO + 1
-WHERE 
-    ID_PRODUTO = 3
-    ;
+WHERE
+    ID_PEDIDO = 2 AND ID_PRODUTO = 2
+;
 
+COMMIT;
+
+-- Diminuindo - 1 unid
+
+UPDATE
+    TBL_CARRINHO
+SET
+    QNT_PRODUTO = QNT_PRODUTO - 1
+WHERE
+    ID_PEDIDO = 2 AND ID_PRODUTO = 2
+;
+
+COMMIT;
+
+-- Removendo produto do carrinho
+
+DELETE FROM TBL_CARRINHO WHERE ID_PEDIDO = 2 AND ID_PRODUTO = 2;
+
+COMMIT;
 
 -- ------------------------------------------------
 
