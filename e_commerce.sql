@@ -2606,8 +2606,8 @@ END;
 -- Exemplo join --
 
 SELECT *
-FROM TBL_PEDIDO C -- Tabela da esquerda
-INNER JOIN TBL_CLIENTE P -- Tabela da direita
+FROM TBL_PEDIDO P -- Tabela da esquerda
+INNER JOIN TBL_CLIENTE C -- Tabela da direita
 ON C.ID_CLIENTE = P.ID_CLIENTE;
 
 -- Top 10 Clientes que mais realizaram pedidos --
