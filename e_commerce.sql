@@ -905,7 +905,7 @@ ORDER BY
 
 SELECT * FROM tbl_cliente ORDER BY id_cliente;
 
-SELECT * FROM vw_tbl_cliente;
+SELECT * FROM vw_tbl_cliente WHERE "Nascimento" >= TO_DATE('19-12-1970','dd-mm-yyyy');
 
 
 -- ------------------------ // ------------------------
@@ -914,22 +914,27 @@ SELECT * FROM vw_tbl_cliente;
 
 CREATE OR REPLACE VIEW vw_tbl_pedido AS
 SELECT
-    ID_PEDIDO                                       AS  "Nº Pedido"         ,
-    ID_CLIENTE                                      AS  "ID do Cliente"     ,
+    P.ID_PEDIDO                                       AS  "Nº Pedido"         ,
+    C.ID_CLIENTE                                      AS  "ID do Cliente"     ,
+    C.NOME_CLIENTE || ' ' || C.SOBRENOME_CLIENTE             AS  "Cliente"     ,
     CASE 
-        WHEN SITUACAO_PAG IS NULL THEN 'Pendente' 
+        WHEN P.SITUACAO_PAG IS NULL THEN 'Pendente' 
         ELSE                            'Pago' 
         END                                         AS  "Situação"          ,
-    TO_CHAR(DATA_PEDIDO,'dd-mm-YYYY')               AS  "Data"
+    TO_CHAR(P.DATA_PEDIDO,'dd-mm-YYYY')               AS  "Data"
 FROM
-    ADMIN.TBL_PEDIDO
+    ADMIN.TBL_PEDIDO P
+INNER JOIN
+    ADMIN.TBL_CLIENTE C
+ON
+    P.ID_CLIENTE = C.ID_CLIENTE
 ORDER BY
     ID_PEDIDO
     ;
 
 SELECT * FROM tbl_pedido ORDER BY  id_pedido;
 
-SELECT * FROM vw_tbl_pedido;
+SELECT * FROM vw_tbl_pedido; 
 
 -- ------------------------ // ------------------------
 
@@ -937,16 +942,21 @@ SELECT * FROM vw_tbl_pedido;
 
 CREATE OR REPLACE VIEW vw_tbl_carrinho AS
 SELECT
-    ID_PEDIDO                                                       AS  "Nº do Pedido"      ,
-    ID_PRODUTO                                                      AS  "Id do Produto"     ,
-    QNT_PRODUTO                                                     AS  "Quantidade"        ,
-    PRECO_PRODUTO                                                   AS  "Preço Unitário"    ,
-    CUSTO_PRODUTO                                                   AS  "Custo Unitário"    ,
-    CUSTO_PRODUTO*QNT_PRODUTO                                       AS  "Custo Total"       ,
-    PRECO_PRODUTO*QNT_PRODUTO                                       AS  "Preço Total"       ,
-    (PRECO_PRODUTO*QNT_PRODUTO)-(CUSTO_PRODUTO*QNT_PRODUTO)         AS  "Faturamento Total"       
+    C.ID_PEDIDO                                                     AS  "Nº do Pedido"      ,
+    C.ID_PRODUTO                                                    AS  "Id Produto"     ,
+    P.NOME_PRODUTO                                                  AS  "Produto"     ,
+    C.QNT_PRODUTO                                                     AS  "Qnt"        ,
+    C.PRECO_PRODUTO                                                   AS  "Preço"    ,
+    --CUSTO_PRODUTO                                                   AS  "Custo Unitário"    ,
+    --CUSTO_PRODUTO*QNT_PRODUTO                                       AS  "Custo Total"       ,
+    C.PRECO_PRODUTO*C.QNT_PRODUTO                                       AS  "Total"       
+    -- (PRECO_PRODUTO*QNT_PRODUTO)-(CUSTO_PRODUTO*QNT_PRODUTO)         AS  "Faturamento Total"       
 FROM
-    ADMIN.TBL_CARRINHO
+    ADMIN.TBL_CARRINHO C
+INNER JOIN
+    ADMIN.TBL_PRODUTO P
+ON
+    C.ID_PRODUTO = P.ID_PRODUTO
 ORDER BY
     ID_PEDIDO
     ;
@@ -2520,7 +2530,7 @@ END;
 
 -- Insert --
 
-EXEC SP_PROCEDIMENTOS_CARRINHO('I',101,6,2);
+EXEC SP_PROCEDIMENTOS_CARRINHO('I',1,6,2);
 
 -- Update --
 
