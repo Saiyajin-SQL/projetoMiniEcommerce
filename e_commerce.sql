@@ -1439,7 +1439,7 @@ END;
 
 ALTER TRIGGER TRG_CONTROLE_ESTOQUE DISABLE; -- Inativar trigger
 
-EXEC SP_INSERIR_PRODUTOS(100);
+EXEC SP_INSERIR_PRODUTOS(500);
 
 ALTER TRIGGER TRG_CONTROLE_ESTOQUE ENABLE; -- ativar trigger
 
@@ -1529,7 +1529,7 @@ END;
 
 -- Executar procedimento --
 
-EXEC SP_INSERIR_CLIENTES(200);
+EXEC SP_INSERIR_CLIENTES(1000);
 
 
 -- ------------------------ // ------------------------
@@ -1632,7 +1632,7 @@ END;
 
 -- Executar procedimento --
 
-EXEC SP_INSERIR_PEDIDOS(100);
+EXEC SP_INSERIR_PEDIDOS(500);
 
 -- Tabelas
 
